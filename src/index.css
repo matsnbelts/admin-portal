@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.center-navbar {
+  text-align: center;
+}
+.center-navbar .navbar {
+  display: inline-block;
+}
+.center-navbar .navbar .container {
+  width: 100%;
+}
+.secondary-content{
+  color: #2196f3 !important;
+ }
+ .material-icons{
+  margin: 0 10px !important;
+ }
+ .delete{
+  color: red;
+ }
+ .edit{
+  color: green;
+ }
