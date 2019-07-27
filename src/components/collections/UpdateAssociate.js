@@ -33,7 +33,7 @@ componentDidUpdate(prevProps) {
             doj: doj,
             serviceArea: associateActionData.serviceArea,
             email: associateActionData.email,
-            //active: associateActionData.active,
+            active: associateActionData.active,
         }, function() {
             console.log(this.state)
         })
@@ -48,7 +48,8 @@ handleChange = (e) => {
 
 updateAssociate = e => {
     e.preventDefault()
-    this.props.updateAssociate(this.state, this.props.match.params.id)
+    if (this.state.mobile !== '' && this.state.name !== '' && this.state.doj !== '')
+        this.props.updateAssociate(this.state, this.props.match.params.id)
     this.props.history.push('/view_associates')
 }
 

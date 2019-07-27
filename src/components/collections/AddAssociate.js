@@ -35,26 +35,24 @@ class AddAssociate extends Component {
     handleAdd = (e) => {
         e.preventDefault();
         console.log("Associate State after added: " + this.state);
-        if (this.state.mobile !== '')
+        if (this.state.mobile !== '' && this.state.name !== '' && this.state.doj !== '')
           this.props.addAssociate(this.state);
     }
     render() {
-        console.log('ppp::: ' + this.props);
-
         return (
             <Container>
                 <Row>
     <form onSubmit={this.handleAdd} className="col s12">
       <Row>
-      <TextInput required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} />
-      <TextInput required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} />
+      <TextInput style={(this.state.name === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} />
+      <TextInput style={(this.state.mobile === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} />
       </Row>
       <Row>
       <TextInput required="" aria-required="true" className="input-field col s10" label="ID Proof" id="idProof" type="text" onChange={this.handleChange} />
       <TextInput required="" aria-required="true" className="input-field col s10" label="Service Area" id="serviceArea" type="text" onChange={this.handleChange} />
       </Row>
       <Row>
-      <TextInput className="input-field col s12" label="Date of Join" id="doj" type="date"  onChange={this.handleChange} />
+      <TextInput style={(this.state.doj === '') ? {borderColor: 'red'} : {}} className="input-field col s12" label="Date of Join" id="doj" type="date"  onChange={this.handleChange} />
       <TextInput className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange} />
       </Row>
 
@@ -72,6 +70,8 @@ class AddAssociate extends Component {
 const mapStateToProps = (state) => {
     console.log('Map state to props--------')
     console.log(state.associate)
+    console.log("err: " + state.err)
+
     return {
         associate: state.associate
     }

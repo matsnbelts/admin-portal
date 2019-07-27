@@ -23,10 +23,6 @@ class AddCustomer extends Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     let selects = document.querySelectorAll('select');
@@ -123,9 +119,11 @@ class AddCustomer extends Component {
   handleAdd = (e) => {
     e.preventDefault();
     console.log("Customer State after added: " + this.state);
-    if (this.state.mobile !== '')
+    if (this.state.mobile !== '' && this.state.name !== '' && this.state.apartmentNo !== ''
+    && this.state.apartment !== '' && this.state.email !== '') {
       this.props.addCustomer(this.state)
       this.props.history.push('/view_customers')
+    }
   }
   render() {
     const addCars = this.state.Cars.map((car_form, index) => (
@@ -134,9 +132,9 @@ class AddCustomer extends Component {
         <div className="divider"></div>
         <div className="section">
           <Row>
-            <TextInput required="" className="validate input-field col s12" label="number" id={index + "no"} type="text" value={car_form["no"]} onChange={(e) => this.handleCarFieldChange(index, "no", e)} />
-            <TextInput required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form["model"]} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
-            <TextInput label="Start Date" id={index + "startDate"} type="date" value={(car_form["startDate"]) ? new Date(new Date(car_form["startDate"]) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
+            <TextInput style={(car_form.no === '') ? {borderColor: 'red'} : {}} required="" className="validate input-field col s12" label="number" id={index + "no"} type="text" value={car_form.no} onChange={(e) => this.handleCarFieldChange(index, "no", e)} />
+            <TextInput style={(car_form.model === '') ? {borderColor: 'red'} : {}} required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form.model} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
+            <TextInput style={(car_form.startDate === '') ? {borderColor: 'red'} : {}} label="Start Date" id={index + "startDate"} type="date" value={(car_form["startDate"]) ? new Date(new Date(car_form.startDate) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
           </Row>
           <Row>
           <div className="input-field col s6">
@@ -174,9 +172,7 @@ class AddCustomer extends Component {
           <Row>
             <Button id={index + "remove"} onClick={(e) => this.handleRemoveCar(index, e)} className="#000000 black">Remove Car</Button>
           </Row>
-
         </div>
-
       </Container>
     ));
     return (
@@ -184,16 +180,16 @@ class AddCustomer extends Component {
         <Row>
           <form onSubmit={this.handleAdd} className="col s12">
             <Row>
-              <TextInput required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} />
-              <TextInput required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.name === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.mobile === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} />
             </Row>
             <Row>
-              <TextInput required="" aria-required="true" className="input-field col s12" label="Apartment No" id="apartmentNo" type="text" onChange={this.handleChange} />
-              <TextInput required="" aria-required="true" className="input-field col s12" label="Apartment" id="apartment" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.apartmentNo === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s12" label="Apartment No" id="apartmentNo" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.apartment === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s12" label="Apartment" id="apartment" type="text" onChange={this.handleChange} />
               <TextInput required="" aria-required="true" className="input-field col s12" label="Area" id="area" type="text" onChange={this.handleChange} />
             </Row>
             <Row>
-              <TextInput className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.email === '') ? {borderColor: 'red'} : {}} className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange} />
               <TextInput className="input-field col s12" label="Staff" id="staff" type="text" onChange={this.handleChange} />
             </Row>
             <div>

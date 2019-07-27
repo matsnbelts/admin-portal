@@ -17,7 +17,7 @@ export const addCustomer = (c) => {
         let cars_list = c.Cars;
         let Cars = {};
         cars_list.map((car) => {
-            car.active = true;
+            car.status = true;
             car.startDate = (!car.startDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(car.startDate));
             car.promoExpiry = (!car.promoExpiry) ? null : new firebase.firestore.Timestamp.fromDate(new Date(car.promoExpiry));
             Cars[car.no] = car;
@@ -57,16 +57,15 @@ export const updateCustomerAction = (c, customerId) => {
         customer.apartmentNo = c.apartmentNo;
         customer.area = c.area;
         customer.apartmentNo = c.apartmentNo;
-        customer.active = true;
+        customer.active = c.active;
         customer.staff = c.staff;
         customer.email = c.email;
         let cars_list = c.Cars;
         let Cars = {};
         cars_list.map((car) => {
-            car.active = true;
             car.startDate = (!car.startDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(car.startDate));
+            delete car.loaded_from_db;
             Cars[car.no] = car;
-
         });
         customer.Cars = Cars;
         const firestore = getFirestore()

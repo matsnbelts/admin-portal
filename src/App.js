@@ -7,6 +7,7 @@ import AssociateList from './components/collections/AssociateList';
 import CustomerList from './components/collections/CustomerList';
 import UpdateSingleCustomer from './components/collections/UpdateCustomer'
 import UpdateSingleAssociate from './components/collections/UpdateAssociate'
+import AssignJobs from './components/collections/AssignJobs'
 
 
 class App extends Component {
@@ -21,6 +22,10 @@ class App extends Component {
             <Route path='/view_customers' component={CustomerList} />
             <Route path='/customer/:id' component={UpdateSingleCustomer} />
             <Route path='/associate/:id' component={UpdateSingleAssociate} />
+            <Route path='/assign_jobs' component={AssignJobs} />
+            <Route path='/interior_availability' component={AssignJobs} />
+            <Route path='/exterior_unavailability' component={AssignJobs} />
+
           </Switch>
       </BrowserRouter>
     )

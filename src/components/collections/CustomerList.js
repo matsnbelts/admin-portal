@@ -6,12 +6,17 @@ import { compose } from 'redux'
 import { Collapsible, CollapsibleItem } from 'react-materialize'
 
 const Cars = (props) => {
+  console.log('-------------------')
   for(let [carNo, car] of Object.entries(props)) {
+    console.log(carNo + " : " + car.model)
     return (
+      // <CollapsibleItem id={carNo} key={carNo} header={carNo} icon='filter_drama'>
       <div>
         <div> { carNo } </div>
         <div> { car.model }</div>
       </div>
+
+      // </CollapsibleItem>
     )
   } 
 }
@@ -22,15 +27,18 @@ const Customers = (props) => {
   if (customer) {
     customers = (customer.map(g => {
       return (
-        <CollapsibleItem header={g.name + " " + g.id} icon='filter_drama'>
+        <CollapsibleItem key={g.name + " " + g.id} header={g.name + " " + g.id} icon='filter_drama'>
           <div><span>Customer Name: </span><span>{g.name}</span></div>
           <div><span>Customer Mobile: </span><span>{g.id}</span></div>
           <div><span>Customer Status: </span><span>{g.active}</span></div>
           <div><span>Apartment: </span><span>{g.apartmentNo} {g.apartment}</span></div>
           <div><span>Email: </span><span>{g.email}</span></div>
           <div><span>Cleaner Mobile: </span><span>{g.staff}</span></div>
-          { Cars(g.Cars) }
-          
+          <div>
+            <Collapsible>
+              { Cars(g.Cars) }
+            </Collapsible>     
+          </div>
           <Link className='secondary-content' to='/' onClick={() => deleteGoal(g.id)}>
             <i className='material-icons delete'>delete</i>
           </Link>
@@ -62,7 +70,6 @@ const Customers = (props) => {
 //  }
 // }
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
     customer: state.firestoreDocs.ordered.customers
   }

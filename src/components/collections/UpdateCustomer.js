@@ -1,7 +1,6 @@
 import React from 'react'
-// import Form from './form'
 import { connect } from 'react-redux'
-import { Container, Button, TextInput, Row, Switch} from 'react-materialize';
+import { Container, Button, TextInput, Row, Switch, Collapsible, CollapsibleItem} from 'react-materialize';
 import { getCustomerAction, updateCustomerAction } from '../../store/actions/customerActions'
 import M from "materialize-css";
 
@@ -43,7 +42,8 @@ class UpdateSingleCustomer extends React.Component {
                 car_map['loaded_from_db'] = true
                 for(let [car_key, car_value] of Object.entries(value)) {
                     if(car_key === 'startDate' || car_key === 'promoExpiry') {
-                        car_map[car_key] = (car_value) ? car_value.toDate().toDateString() : ""
+                        console.log(typeof car_value == 'object')
+                        car_map[car_key] = (car_value && typeof car_value == 'object') ? car_value.toDate().toDateString() : ""
                     } else {
                         car_map[car_key] = car_value
                     }
@@ -51,7 +51,6 @@ class UpdateSingleCustomer extends React.Component {
                 Cars.push(car_map)
                 console.log(key + ":" +value)
             }
-            console.log(Cars)
             this.setState({
                 ...this.state,
                 name: customerActionData.name,
@@ -61,12 +60,12 @@ class UpdateSingleCustomer extends React.Component {
                 area: customerActionData.area,
                 email: customerActionData.email,
                 staff: customerActionData.staff,
+                active: customerActionData.active,
                 Cars: Cars
             }, function() {
                 console.log(this.state)
                 console.log(this.state.Cars)
             })
-            this.forceUpdate()
         }
     }
     handleCancel() {
@@ -74,6 +73,7 @@ class UpdateSingleCustomer extends React.Component {
     }
     handleChange = (e) => {
         this.setState({
+          ...this.state,
           [e.target.id]: e.target.value
         })
     }
@@ -86,7 +86,9 @@ class UpdateSingleCustomer extends React.Component {
 
     updateCustomer = e => {
         e.preventDefault()
-        this.props.updateCustomer(this.state, this.props.match.params.id)
+        if (this.state.mobile !== '' && this.state.name !== '' && this.state.apartmentNo !== ''
+        && this.state.apartment !== '' && this.state.email !== '')
+            this.props.updateCustomer(this.state, this.props.match.params.id)
         this.props.history.push('/view_customers')
     }
     handleCarFieldChange = (index, attr, e) => {
@@ -125,18 +127,21 @@ class UpdateSingleCustomer extends React.Component {
             break;
           case 'startDate':
             car.startDate = e.target.value;
-            console.log("ssssss: " + car.startDate)
             break;
           default:
         }
         // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
         Cars_[index] = car;
         // 5. Set the state to our new copy
-        this.setState({ Cars: Cars_ }, function() {
+        this.setState({ 
+            ...this.state,
+            Cars: Cars_
+        }, function() {
             console.log(this.state.Cars)
         });
       }
-    handleAddCar = () => {
+    handleAddCar = (e) => {
+        e.preventDefault();
         let car = {}
         car.no = '';
         car.model = '';
@@ -145,11 +150,14 @@ class UpdateSingleCustomer extends React.Component {
         car.pack = 'Full';
         car.promocode = '';
         car.promoexpiry = '';
+        car.status = true;
         car.loaded_from_db = false;
     
-        let Cars = [...this.state.Cars, car];
+        let cars_list = this.state.Cars;
+        cars_list.push(car)
         this.setState({
-          Cars: Cars
+          ...this.state,
+          Cars: cars_list
         });
         console.log("handle ADD Car " + car.no);
     }
@@ -163,7 +171,10 @@ class UpdateSingleCustomer extends React.Component {
         // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
         Cars_[index] = car;
         // 5. Set the state to our new copy
-        this.setState({ Cars: Cars_ }, function() {
+        this.setState({ 
+            ...this.state,
+            Cars: Cars_ 
+        }, function() {
             console.log(this.state.Cars)
         });
     }
@@ -173,25 +184,20 @@ class UpdateSingleCustomer extends React.Component {
         if (index !== -1) {
             Cars.splice(index, 1);
         }
-        this.setState({ Cars });
-        this.state.Cars.map((car_form, index) => {
-            for (let [carModel, value] of Object.entries(car_form)) {
-            console.log("iiii " + index + "  : " + carModel + " : " + value);
-            }
-        });
+        this.setState({                 
+            ...this.state,
+            Cars
+         });
     }
     getPromoCode = promocode => {
         return (!promocode) ? "": promocode
     }
     render() {
-        this.state.Cars.map((car_form, index) => {
-            console.log('rendering ' + car_form.status)
-        });
-        
-        const showRemoveButton = (index, loaded_from_db) => {
+
+        const showRemoveButton = (index, loaded_from_db, status) => {
             if(loaded_from_db) {
                 return (
-                <Button id={index + "stop"} onClick={(e) => this.handleStopCar(index, e)} className="#000000 black">{"Start Car"}</Button>
+                <Button id={index + "stop"} onClick={(e) => this.handleStopCar(index, e)} className="#000000 black">{status ? "Deactivate Car":"Activate Car"}</Button>
                 )
             } else {
                 return (
@@ -199,28 +205,30 @@ class UpdateSingleCustomer extends React.Component {
                 )
             }
         }
+
         const addCars = this.state.Cars.map((car_form, index) => (
-            <Container id={index + "container"} key={index + "container"}>
+            <CollapsibleItem id={index + "container"} key={index + "container"} header={car_form["no"]}>
               <div className="divider"></div>
               <div className="section">
                 <Row>
-                  <TextInput required="" className="validate input-field col s12" label="number" id={index + "no"} type="text" value={car_form["no"]} onChange={(e) => this.handleCarFieldChange(index, "no", e)} />
-                  <TextInput required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form["model"]} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
-                  <TextInput label="Start Date" id={index + "startDate"} type="date" value={(car_form["startDate"]) ? new Date(new Date(car_form["startDate"]) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
-                </Row>
+                    <TextInput style={(car_form.no === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} value={this.state.name} />
+                    <TextInput style={(car_form.model === '') ? {borderColor: 'red'} : {}} disabled={!car_form.status} required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form.model} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
+                    <TextInput style={(car_form.startDate === '') ? {borderColor: 'red'} : {}} disabled={!car_form.status} label="Start Date" id={index + "startDate"} type="date" value={(car_form.startDate) ? new Date(new Date(car_form["startDate"]) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
+               </Row>
                 <Row>
-                <div className="input-field col s6">
-                    <select required aria-required="true" id={index + "type"} value={car_form["type"]} onChange={(e) => this.handleCarFieldChange(index, "type", e)}>
-                      <option value="" disabled >Choose your option</option>
-                      <option value="Sedan">Sedan</option>
-                      <option value="hatchback">Hatchback</option>
-                      <option value="suv">SUV</option>
-                      <option value="smallcar">SmallCar</option>
-                    </select>
-                    <label>Type</label>
-                  </div>
+                    <div className="input-field col s6">
+                        <select disabled={!car_form.status} required aria-required="true" id={index + "type"} value={car_form.type} onChange={(e) => this.handleCarFieldChange(index, "type", e)}>
+                            <option value="" disabled >Choose your option</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="hatchback">Hatchback</option>
+                            <option value="suv">SUV</option>
+                            <option value="smallcar">SmallCar</option>
+                        </select>
+
+                        <label>Type</label>
+                    </div>
                   <div className="input-field col s6">
-                    <select id={index + "pack"} value={car_form["pack"]} onChange={(e) => this.handleCarFieldChange(index, "pack", e)}>
+                    <select disabled={!car_form.status} id={index + "pack"} value={car_form.pack} onChange={(e) => this.handleCarFieldChange(index, "pack", e)}>
                       <option className="#000000 black white-text text-darken-2" value="" disabled>Choose your option</option>
                       <option className="#000000 black" value="Full">Full</option>
                       <option className="#000000 black white-text text-darken-2" value="Mini">Mini</option>
@@ -230,7 +238,7 @@ class UpdateSingleCustomer extends React.Component {
                   </Row>
                 <Row>
                   <div className="input-field col s3">
-                    <select className="#000000 black white-text text-darken-2" id={index + "promocode"} value={this.getPromoCode(car_form.promocode)} onChange={(e) => this.handleCarFieldChange(index, "promocode", e)}>
+                    <select disabled={!car_form.status} className="#000000 black white-text text-darken-2" id={index + "promocode"} value={this.getPromoCode(car_form.promocode)} onChange={(e) => this.handleCarFieldChange(index, "promocode", e)}>
                       <option value="" disabled>Choose</option>
                       <option value="Promo100">Promo100</option>
                       <option value="Promo200">Promo200</option>
@@ -238,17 +246,17 @@ class UpdateSingleCustomer extends React.Component {
                     </select>
                     <label>PromoCode</label>
                   </div>
-                  <TextInput className="input-field col s12" label="Promo Expiry" id={index + "promoExpiry"} type="date" value={(car_form.promoexpiry) ? new Date(new Date(car_form.promoexpiry) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "promoExpiry", e)} />
+                  <TextInput disabled={!car_form.status} className="input-field col s12" label="Promo Expiry" id={index + "promoExpiry"} type="date" value={(car_form.promoexpiry) ? new Date(new Date(car_form.promoexpiry) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "promoExpiry", e)} />
                 </Row>
                 <Row>
                     <label className="col s2">Car Status</label>
                     <Switch className="col s6" onLabel="On" disabled offLabel="Off"checked={car_form.status} id={index + "status"} onChange={(e) => this.handleCarFieldChange(index, "status", e)} />
                 </Row>
                 <Row>
-                    {showRemoveButton(index, car_form.loaded_from_db)}
+                    {showRemoveButton(index, car_form.loaded_from_db, car_form.status)}
                 </Row>
               </div>
-            </Container>
+            </CollapsibleItem>
           ));
         return (         
             <div>
@@ -258,23 +266,25 @@ class UpdateSingleCustomer extends React.Component {
             <Row>
                 <form onSubmit={this.updateCustomer} className="col s12">
                     <Row>
-                        <TextInput required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} value={this.state.name} />
-                        <TextInput required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} value={this.state.mobile} />
+                        <TextInput style={(this.state.name === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} value={this.state.name} />
+                        <TextInput style={(this.state.mobile === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} value={this.state.mobile} />
                     </Row>
                     <Row>
-                        <TextInput required="" aria-required="true" className="input-field col s12" label="Apartment No" id="apartmentNo" type="text" onChange={this.handleChange} value={this.state.apartmentNo} />
-                        <TextInput required="" aria-required="true" className="input-field col s12" label="Apartment" id="apartment" type="text" onChange={this.handleChange}  value={this.state.apartment}/>
+                        <TextInput style={(this.state.apartmentNo === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s12" label="Apartment No" id="apartmentNo" type="text" onChange={this.handleChange} value={this.state.apartmentNo} />
+                        <TextInput style={(this.state.apartment === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s12" label="Apartment" id="apartment" type="text" onChange={this.handleChange}  value={this.state.apartment}/>
                         <TextInput required="" aria-required="true" className="input-field col s12" label="Area" id="area" type="text" onChange={this.handleChange}  value={this.state.area}/>
                     </Row>
                     <Row>
-                        <TextInput className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange}  value={this.state.email}/>
+                        <TextInput style={(this.state.email === '') ? {borderColor: 'red'} : {}} className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange}  value={this.state.email}/>
                         <TextInput className="input-field col s12" label="Staff" id="staff" type="text" onChange={this.handleChange} value={this.state.staff} />
-                        <span className="col s4">Customer Status</span>
-                        <Switch className="col s4" onLabel="On" offLabel="Off" id="customerStatus" checked={this.state.active} onChange={this.handleCustomerSwitchChange} />
                     </Row>
-                    <div>
+                    <Row>
+                        <span className="col s4">Customer Status</span>
+                        <Switch className="col s6" onLabel="On" offLabel="Off" id="customerStatus" checked={this.state.active} onChange={this.handleCustomerSwitchChange} />
+                    </Row>
+                    <Collapsible>
                         {addCars}
-                    </div>
+                    </Collapsible>
                     <div className="row">
                         <div className="input-field col s12">
                             <Button onClick={this.handleAddCar} className="#000000 black">Add Car</Button>
