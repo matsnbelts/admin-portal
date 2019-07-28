@@ -1,15 +1,4 @@
-const getAssociateName = (associateId, firestore) => {
-    firestore.collection('associates').doc(associateId).get().then((doc) => {
-        if (doc.exists) {
-            const associate = doc.data()
-            console.log(associate.name)
-            return associate.name;
-        } else {
-            console.log(associateId + ' does not exist')
-            return null;
-        }
-    })
-}
+
 export const getJobsAction = (currentDate) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
@@ -17,7 +6,7 @@ export const getJobsAction = (currentDate) => {
         firestore.collection('associates').get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 const associate = doc.data()
-                console.log(associate.name)
+                //console.log(associate.name)
                 associateMap[doc.id] = associate.name;
             });
         });
@@ -33,7 +22,7 @@ export const getJobsAction = (currentDate) => {
                     job.carId = doc.id;
                     //console.log(job.associateId);
                     job.associateName = associateMap[job.associateId];
-                    console.log(job.associateId + " - " + job.associateName);
+                    //console.log(job.associateId + " - " + job.associateName);
                     jobs.push(job);
                 })
                 dispatch({ type: 'JOBS_LIST', jobs })

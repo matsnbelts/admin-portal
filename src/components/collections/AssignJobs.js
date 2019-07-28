@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Container, Button, TextInput, Collapsible, CollapsibleItem} from 'react-materialize';
+import JobAssociateFilterForm from './JobAssociateFilterForm'
+import { Container, Button, TextInput} from 'react-materialize';
 import {getJobsAction, scheduleJobAction} from '../../store/actions/scheduleJobActions'
-import M from "materialize-css";
 
 class AssignJobs extends React.Component {
     constructor() {
@@ -38,13 +38,12 @@ class AssignJobs extends React.Component {
                 jobs: jobActionData,
                 showCollapsible: true
             });
-            jobActionData.map((job) => {
-                console.log(job.carId);
-            })
+            // jobActionData.map((job) => {
+            //     console.log(job.carId);
+            // })
         }
     }
     handleDateChange = (e) => {
-        console.log(e.target.value);
         
         this.setState({
             ...this.state,
@@ -58,7 +57,6 @@ class AssignJobs extends React.Component {
     }
     handleGetJobButton = () => {
         this.props.getJobs(this.state.currentDate);
-        //this.state.jobs.length == 0 && this.state.currentDate.getDate() === new Date().getDate() ? true :
         this.setState({
             ...this.state,
             //showCollapsible: true,
@@ -90,26 +88,14 @@ class AssignJobs extends React.Component {
     }
     render() {
 
-        const showJobs = this.state.jobs.length > 0 ? this.state.jobs.map((job, index) => (
-            <CollapsibleItem key={job.carId} header={job.carId + " " + job.customerId +
-             " " + job.associateId} icon='filter_drama'>
-                <div><span>Car Number: </span><span>{job.carId}</span></div>
-                <div><span>Customer Mobile: </span><span>{job.customerId}</span></div>
-                <div><span>Associate Mobile: </span><span>{job.associateId}</span></div>
-                <div><span>Cleaning Status: </span><span>{job.cleaningStatus}</span></div>
-                <div><span>Customer Availability: </span><span>{job.customerAvailability ? "Available": "Not Available"}</span></div>
-                <div><span>Service Type: </span><span>{job.serviceType}</span></div>
-                <div><span>Associate Feedback: </span><span>{job.associateFeedback}</span></div>
-                <div><span>Customer Feedback: </span><span>{job.customerFeedback}</span></div>
-            </CollapsibleItem>
-        )) : (
-            <div>No Cars assigned yet</div>
-        );
         const showCollapsible = this.state.showCollapsible && (
             <div>
-                <Collapsible> 
-                    {showJobs}
-                </Collapsible>
+                {/* <div className="section">
+                            <JobAssociateFilterForm parentState={this.state} />
+                        </div> */}
+                    <JobAssociateFilterForm parentState={this.state} />
+
+                    {/* {showJobs} */}
             </div>
             );
         return (
@@ -126,7 +112,11 @@ class AssignJobs extends React.Component {
                             ( this.state.currentDate.getDate() == new Date().getDate() ) &&
                             <Button className="col s2 #000000 black" onClick={this.startJobScheduler}>Start Job Scheduler</Button>
                         }
-                        {showCollapsible}
+                            <div className="section">   </div>
+                        <div className="divider"></div>
+                        <div className="section">
+                            {showCollapsible}
+                        </div>
                         
                     </Container >
                 </div>
@@ -148,4 +138,3 @@ const mapStateToProps = (state) => {
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(AssignJobs)
-// export default AssignJobs

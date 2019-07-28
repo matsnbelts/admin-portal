@@ -1,0 +1,29 @@
+/* 
+  .filter-form {
+    height: 300px;
+    width: 200px;
+    border: solid 1px gold;
+    overflow: auto;
+  }
+  .filter-item {
+    background: gold;
+    height: 30px;
+    padding: 5px 10px;
+    color: goldenrod;
+    border-bottom: solid 1px goldenrod;
+  } */
+  /* .filter-options {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  .filter-option {
+    margin: 0 10px;
+  }
+  label, select {
+    margin-right: 10px;
+  } */
+  label, select {
+    width: 50%;
+    margin-right: 10px;
+    display: flex
+  }
