@@ -37,6 +37,7 @@ class AddAssociate extends Component {
         console.log("Associate State after added: " + this.state);
         if (this.state.mobile !== '' && this.state.name !== '' && this.state.doj !== '')
           this.props.addAssociate(this.state);
+          this.props.history.push('/view_associates');
     }
     render() {
         return (

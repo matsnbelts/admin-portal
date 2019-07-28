@@ -12,7 +12,7 @@ export const addCustomer = (c) => {
         customer.area = c.area;
         customer.apartmentNo = c.apartmentNo;
         customer.active = true;
-        customer.staff = c.staff;
+        customer.staffMobile = c.staffMobile;
         customer.email = c.email;
         let cars_list = c.Cars;
         let Cars = {};
@@ -58,7 +58,7 @@ export const updateCustomerAction = (c, customerId) => {
         customer.area = c.area;
         customer.apartmentNo = c.apartmentNo;
         customer.active = c.active;
-        customer.staff = c.staff;
+        customer.staffMobile = c.staffMobile;
         customer.email = c.email;
         let cars_list = c.Cars;
         let Cars = {};

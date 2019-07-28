@@ -18,7 +18,7 @@ class AddCustomer extends Component {
       apartment: '',
       area: '',
       email: '',
-      staff: '',
+      staffMobile: '',
       submitted: false
     }
   }
@@ -190,7 +190,7 @@ class AddCustomer extends Component {
             </Row>
             <Row>
               <TextInput style={(this.state.email === '') ? {borderColor: 'red'} : {}} className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange} />
-              <TextInput className="input-field col s12" label="Staff" id="staff" type="text" onChange={this.handleChange} />
+              <TextInput className="input-field col s12" label="Staff Mobile" id="staffMobile" type="text" onChange={this.handleChange} />
             </Row>
             <div>
               {addCars}

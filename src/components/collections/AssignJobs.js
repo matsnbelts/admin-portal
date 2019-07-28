@@ -66,6 +66,7 @@ class AssignJobs extends React.Component {
         });
     }
     startJobScheduler = () => {
+        console.log(this.state.currentDate);
         this.props.scheduleJob(this.state.currentDate);
         this.props.getJobs(this.state.currentDate);
 
@@ -95,6 +96,11 @@ class AssignJobs extends React.Component {
                 <div><span>Car Number: </span><span>{job.carId}</span></div>
                 <div><span>Customer Mobile: </span><span>{job.customerId}</span></div>
                 <div><span>Associate Mobile: </span><span>{job.associateId}</span></div>
+                <div><span>Cleaning Status: </span><span>{job.cleaningStatus}</span></div>
+                <div><span>Customer Availability: </span><span>{job.customerAvailability ? "Available": "Not Available"}</span></div>
+                <div><span>Service Type: </span><span>{job.serviceType}</span></div>
+                <div><span>Associate Feedback: </span><span>{job.associateFeedback}</span></div>
+                <div><span>Customer Feedback: </span><span>{job.customerFeedback}</span></div>
             </CollapsibleItem>
         )) : (
             <div>No Cars assigned yet</div>

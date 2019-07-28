@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Collapsible, CollapsibleItem } from 'react-materialize'
+import './CustomerList.css'
 
 const Cars = (props) => {
   console.log('-------------------')
@@ -22,26 +23,55 @@ const Cars = (props) => {
 }
 const Customers = (props) => {
   console.log(props.customer)
-  const { customer, deleteGoal } = props
+  const { customer } = props
   let customers
   if (customer) {
     customers = (customer.map(g => {
       return (
-        <CollapsibleItem key={g.name + " " + g.id} header={g.name + " " + g.id} icon='filter_drama'>
-          <div><span>Customer Name: </span><span>{g.name}</span></div>
-          <div><span>Customer Mobile: </span><span>{g.id}</span></div>
-          <div><span>Customer Status: </span><span>{g.active}</span></div>
-          <div><span>Apartment: </span><span>{g.apartmentNo} {g.apartment}</span></div>
-          <div><span>Email: </span><span>{g.email}</span></div>
-          <div><span>Cleaner Mobile: </span><span>{g.staff}</span></div>
+        <CollapsibleItem key={g.name + " " + g.id} header={
           <div>
-            <Collapsible>
-              { Cars(g.Cars) }
-            </Collapsible>     
+            <div className='spann'>{g.name}</div>
+            <div className='spann'>{g.id}</div>
+            <div className='spann'>{(g.active) ? "Active": "Not Active"}</div>
           </div>
-          <Link className='secondary-content' to='/' onClick={() => deleteGoal(g.id)}>
+          } icon='filter_drama'>
+            <table className='table'>
+              <tbody>
+              <tr className='tr'>
+                <td className='td'> Customer Name </td>
+                <td className='td'> {g.name} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> Customer Mobile </td>
+                <td className='td'> {g.id} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> Customer Status </td>
+                <td className='td'> {(g.active) ? "Active": "Not Active"} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> Apartment </td>
+                <td className='td'> {g.apartmentNo} {g.apartment} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> Email </td>
+                <td className='td'> {g.email} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> Cleaner Mobile </td>
+                <td className='td'> {g.staffMobile} </td>
+              </tr>
+              <tr className='tr'>
+                <td className='td'> { Cars(g.Cars) } </td>
+              </tr>
+              </tbody>
+            </table>
+          {/* <div>
+  
+          </div> */}
+          {/* <Link className='secondary-content' to='/' onClick={() => deleteGoal(g.id)}>
             <i className='material-icons delete'>delete</i>
-          </Link>
+          </Link> */}
           <Link className='secondary-content' to={`customer/${g.id}`}>
             <i className='material-icons edit'>edit</i>
           </Link>

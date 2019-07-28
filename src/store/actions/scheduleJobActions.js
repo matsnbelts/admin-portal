@@ -1,6 +1,27 @@
+const getAssociateName = (associateId, firestore) => {
+    firestore.collection('associates').doc(associateId).get().then((doc) => {
+        if (doc.exists) {
+            const associate = doc.data()
+            console.log(associate.name)
+            return associate.name;
+        } else {
+            console.log(associateId + ' does not exist')
+            return null;
+        }
+    })
+}
 export const getJobsAction = (currentDate) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
+        let associateMap = {}
+        firestore.collection('associates').get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                const associate = doc.data()
+                console.log(associate.name)
+                associateMap[doc.id] = associate.name;
+            });
+        });
+
         let jobs = [];
         firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
         .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
@@ -10,7 +31,9 @@ export const getJobsAction = (currentDate) => {
                 querySnapshot.forEach(function(doc) {
                     job = doc.data();
                     job.carId = doc.id;
-                    console.log(job.carId);
+                    //console.log(job.associateId);
+                    job.associateName = associateMap[job.associateId];
+                    console.log(job.associateId + " - " + job.associateName);
                     jobs.push(job);
                 })
                 dispatch({ type: 'JOBS_LIST', jobs })
@@ -53,7 +76,7 @@ export const scheduleJobAction = (currentDate) => {
                         console.log(doc.id, " => ", doc.data());
                         /** */
                         let carsMap = customerInfo.Cars;
-                        let associateId = customerInfo.staff;
+                        let associateId = customerInfo.staffMobile;
                         for(let [carModel, value] of Object.entries(carsMap)) {
                             if(!value.status) {
                               continue;

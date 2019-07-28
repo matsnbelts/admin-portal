@@ -38,6 +38,7 @@ export const getAssociateAction = (associateId) => {
 
 export const updateAssociateAction = (updatedAssociate, associateId) => {
     return (dispatch, getState, { getFirestore }) => {
+        updatedAssociate.doj = (!updatedAssociate.doj) ? null : new firebase.firestore.Timestamp.fromDate(new Date(updatedAssociate.doj));
         const firestore = getFirestore()
         firestore.collection('associates').doc(associateId).update({
             ...updatedAssociate

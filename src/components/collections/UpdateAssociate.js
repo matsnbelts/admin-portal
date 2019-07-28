@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Container, Button, TextInput, Row } from 'react-materialize';
+import { Container, Button, TextInput, Row, Switch } from 'react-materialize';
 import { getAssociateAction, updateAssociateAction } from '../../store/actions/associateActions'
 
 class UpdateSingleAssociate extends React.Component {
@@ -12,7 +12,8 @@ class UpdateSingleAssociate extends React.Component {
             idProof: '',
             serviceArea: '',
             email: '',
-            submitted: false
+            submitted: false,
+            active: true
         }
     }
     componentDidMount() {
@@ -45,7 +46,12 @@ handleChange = (e) => {
       [e.target.id]: e.target.value
     })
 }
-
+handleAssociateSwitchChange = (e) => {
+    this.setState({
+        ...this.state,
+        active: !this.state.active
+    })
+}
 updateAssociate = e => {
     e.preventDefault()
     if (this.state.mobile !== '' && this.state.name !== '' && this.state.doj !== '')
@@ -72,6 +78,10 @@ return (
             <Row>
                 <TextInput className="input-field col s12" label="Date of Join" id="doj" type="date" value={(this.state.doj) ? new Date(new Date(this.state.doj) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={this.handleChange} />
                 <TextInput className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange} value={this.state.email} />
+            </Row>
+            <Row>
+                <span className="col s4">Associate Status</span>
+                <Switch className="col s6" onLabel="On" offLabel="Off" id="customerStatus" checked={this.state.active} onChange={this.handleAssociateSwitchChange} />
             </Row>
             <Button className="#000000 black">Update Associate</Button>
         </form>

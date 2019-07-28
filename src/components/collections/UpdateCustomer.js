@@ -15,9 +15,8 @@ class UpdateSingleCustomer extends React.Component {
             apartment: '',
             area: '',
             email: '',
-            staff: '',
+            staffMobile: '',
             active: true,
-            ss: 'd',
             car_form_data: {}
         }
     }
@@ -29,7 +28,6 @@ class UpdateSingleCustomer extends React.Component {
     componentDidUpdate(prevProps) {
         let selects = document.querySelectorAll('select');
         M.FormSelect.init(selects, {});
-        console.log("CUpdate" + this.prevProps)
 
         // Typical usage (don't forget to compare props):
         if (this.props.getCustomerData !== prevProps.getCustomerData) {
@@ -42,7 +40,6 @@ class UpdateSingleCustomer extends React.Component {
                 car_map['loaded_from_db'] = true
                 for(let [car_key, car_value] of Object.entries(value)) {
                     if(car_key === 'startDate' || car_key === 'promoExpiry') {
-                        console.log(typeof car_value == 'object')
                         car_map[car_key] = (car_value && typeof car_value == 'object') ? car_value.toDate().toDateString() : ""
                     } else {
                         car_map[car_key] = car_value
@@ -59,12 +56,11 @@ class UpdateSingleCustomer extends React.Component {
                 apartment: customerActionData.apartment,
                 area: customerActionData.area,
                 email: customerActionData.email,
-                staff: customerActionData.staff,
+                staffMobile: customerActionData.staffMobile,
                 active: customerActionData.active,
                 Cars: Cars
             }, function() {
                 console.log(this.state)
-                console.log(this.state.Cars)
             })
         }
     }
@@ -212,7 +208,7 @@ class UpdateSingleCustomer extends React.Component {
               <div className="section">
                 <Row>
                     <TextInput style={(car_form.no === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} value={this.state.name} />
-                    <TextInput style={(car_form.model === '') ? {borderColor: 'red'} : {}} disabled={!car_form.status} required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form.model} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
+                    <TextInput style={(car_form.model === '') ? {bnorderColor: 'red'} : {}} disabled={!car_form.status} required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form.model} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
                     <TextInput style={(car_form.startDate === '') ? {borderColor: 'red'} : {}} disabled={!car_form.status} label="Start Date" id={index + "startDate"} type="date" value={(car_form.startDate) ? new Date(new Date(car_form["startDate"]) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
                </Row>
                 <Row>
@@ -220,9 +216,9 @@ class UpdateSingleCustomer extends React.Component {
                         <select disabled={!car_form.status} required aria-required="true" id={index + "type"} value={car_form.type} onChange={(e) => this.handleCarFieldChange(index, "type", e)}>
                             <option value="" disabled >Choose your option</option>
                             <option value="Sedan">Sedan</option>
-                            <option value="hatchback">Hatchback</option>
-                            <option value="suv">SUV</option>
-                            <option value="smallcar">SmallCar</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Small Car">Small Car</option>
                         </select>
 
                         <label>Type</label>
@@ -276,7 +272,7 @@ class UpdateSingleCustomer extends React.Component {
                     </Row>
                     <Row>
                         <TextInput style={(this.state.email === '') ? {borderColor: 'red'} : {}} className="input-field col s12" label="Email" id="email" type="text" onChange={this.handleChange}  value={this.state.email}/>
-                        <TextInput className="input-field col s12" label="Staff" id="staff" type="text" onChange={this.handleChange} value={this.state.staff} />
+                        <TextInput className="input-field col s12" label="Staff Mobile" id="staffMobile" type="text" onChange={this.handleChange} value={this.state.staffMobile} />
                     </Row>
                     <Row>
                         <span className="col s4">Customer Status</span>
