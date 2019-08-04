@@ -34,8 +34,45 @@ export const getJobsAction = (currentDate) => {
     }
 }
 
+export const getJobDetailsAction = (carId, dateToNavigate) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+
+        let jobs = [];
+        dateToNavigate = new Date(dateToNavigate)
+        console.log('' + dateToNavigate.getFullYear() + (dateToNavigate.getMonth() + 1) +
+        dateToNavigate.getDate() + carId)
+        firestore.collection('job_allocation').doc('' + dateToNavigate.getFullYear())
+        .collection('' + (dateToNavigate.getMonth() + 1)).doc('' + dateToNavigate.getDate())
+            .collection("cars").doc('' + carId).get().then((doc) => {
+                console.log(doc.data())
+                if (doc.exists) {
+                    const job = doc.data()
+                    dispatch({ type: 'GET_JOB_DETAILS', job })
+                } else {
+                    console.log(carId + ' does not exist')
+                }
+            }
+        )
+        .catch(function(error) {
+            console.log("Error getting job document: ", error);
+        });
+    }
+}
+export const updateJobAction = (updatedJob, carId, dateToNavigate) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        let currentDate = new Date(dateToNavigate)
+        firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
+                                .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
+                                .collection("cars").doc(carId).update({
+                                    'associateId': updatedJob.mobile,
+                                    'serviceType': updatedJob.serviceType
+                                }
+                                );
+    }
+}
 export const scheduleJobAction = (currentDate) => {
-    console.log("ScheduleJobAction: " + currentDate.getFullYear())
     
     function getCarMap(customerId, associateId) {
         return {

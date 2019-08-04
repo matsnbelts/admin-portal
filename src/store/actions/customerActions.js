@@ -43,6 +43,7 @@ export const getCustomerAction = (customerId) => {
                 dispatch({ type: 'GET_CUSTOMER', customer })
             } else {
                 console.log(customerId + ' does not exist')
+                dispatch({ type: 'GET_CUSTOMER_ERROR', customerId })
             }
         })
     }

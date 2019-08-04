@@ -11,7 +11,6 @@ class AssignJobs extends React.Component {
             jobs: [],
             currentDate: new Date(),
             showCollapsible: false,
-            showJobSchedulerButton: false
         }
         // this.handleChange = this.handleChange.bind(this);
     }
@@ -44,7 +43,7 @@ class AssignJobs extends React.Component {
         }
     }
     handleDateChange = (e) => {
-        
+        console.log(e.target.value)
         this.setState({
             ...this.state,
             showCollapsible: false,
@@ -59,8 +58,6 @@ class AssignJobs extends React.Component {
         this.props.getJobs(this.state.currentDate);
         this.setState({
             ...this.state,
-            //showCollapsible: true,
-            showJobSchedulerButton: true
         });
     }
     startJobScheduler = () => {
@@ -71,23 +68,26 @@ class AssignJobs extends React.Component {
         this.setState({
             ...this.state,
             showCollapsible: true,
-            showJobSchedulerButton: true
         });
         //this.props.history.push('/assign_jobs');
         //window.location.reload(); 
     }
     showCurrentDate = () => {
-        var todayTime = this.state.currentDate;
-        var month = todayTime.getMonth() + 1;
+        let todayTime = this.state.currentDate;
+        let month = todayTime.getMonth() + 1;
+        let day = todayTime.getDate();
         if(month < 10) {
             month = '0' + month
         }
-        var day = todayTime.getDate();
-        var year = todayTime.getFullYear();
+        if(day < 10) {
+            day = '0' + day
+        }
+        let year = todayTime.getFullYear();
+        console.log(year + "-" + month + "-" + day)
         return year + "-" + month + "-" + day;
     }
     render() {
-
+        console.log(this.state.currentDate + " ;; " + new Date('yyyy-MM-dd'))
         const showCollapsible = this.state.showCollapsible && (
             <div>
                 {/* <div className="section">
@@ -105,14 +105,18 @@ class AssignJobs extends React.Component {
                     <Container>
                         <TextInput label="Pick Date" id="jobdate" type="date" value={this.showCurrentDate()} onChange={(e) => this.handleDateChange(e)} />
                         {
-                            ( this.state.currentDate.getDate() <= new Date().getDate() ) && 
+                            ( this.state.currentDate.getDate() <= new Date().getDate() &&
+                            this.state.currentDate.getMonth() <= new Date().getMonth() &&
+                            this.state.currentDate.getFullYear() <= new Date().getFullYear() ) && 
                             <Button className="col s2 #000000 black" onClick={this.handleGetJobButton}>Fetch Job History</Button>
                         }
                         {
-                            ( this.state.currentDate.getDate() == new Date().getDate() ) &&
+                            ( this.state.currentDate.getDate() >= new Date().getDate() &&
+                            this.state.currentDate.getMonth() >= new Date().getMonth() &&
+                            this.state.currentDate.getFullYear() >= new Date().getFullYear() ) &&
                             <Button className="col s2 #000000 black" onClick={this.startJobScheduler}>Start Job Scheduler</Button>
                         }
-                            <div className="section">   </div>
+                        <div className="section">   </div>
                         <div className="divider"></div>
                         <div className="section">
                             {showCollapsible}

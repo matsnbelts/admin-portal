@@ -22,7 +22,7 @@
   label, select {
     margin-right: 10px;
   } */
-  label, select {
+  .associate-filter {
     width: 50%;
     margin-right: 10px;
     display: flex

@@ -189,7 +189,6 @@ class UpdateSingleCustomer extends React.Component {
         return (!promocode) ? "": promocode
     }
     render() {
-
         const showRemoveButton = (index, loaded_from_db, status) => {
             if(loaded_from_db) {
                 return (

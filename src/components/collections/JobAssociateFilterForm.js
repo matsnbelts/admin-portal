@@ -42,7 +42,7 @@ class JobAssociateFilterForm extends React.Component {
               <div className="filter-form">
                 <div>{'Showing Jobs (' + filteredJobItems.length + ')'}</div>
                 <div className="divider"></div>
-                <JobAssociateFilterItems data={filteredJobItems} />
+                <JobAssociateFilterItems data={filteredJobItems} dateData={this.props.parentState.currentDate}/>
               </div>
             </div>
           )

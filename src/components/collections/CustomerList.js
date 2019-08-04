@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
-import { Collapsible, CollapsibleItem } from 'react-materialize'
+import { Collapsible, CollapsibleItem, Container } from 'react-materialize'
 import './CustomerList.css'
 
 const Cars = (props) => {
@@ -21,6 +21,7 @@ const Cars = (props) => {
     )
   } 
 }
+
 const Customers = (props) => {
   console.log(props.customer)
   const { customer } = props
@@ -28,41 +29,43 @@ const Customers = (props) => {
   if (customer) {
     customers = (customer.map(g => {
       return (
-        <CollapsibleItem key={g.name + " " + g.id} header={
+        <CollapsibleItem key={g.name + " " + g.customerId} header={
           <div>
             <div className='spann'>{g.name}</div>
-            <div className='spann'>{g.id}</div>
+            <div className='spann'>{g.customerId}</div>
+            <div className='spann'>{g.apartmentNo}</div>
+            <div className='spann'>{g.apartment}</div>
             <div className='spann'>{(g.active) ? "Active": "Not Active"}</div>
           </div>
           } icon='filter_drama'>
-            <table className='table'>
-              <tbody>
-              <tr className='tr'>
-                <td className='td'> Customer Name </td>
-                <td className='td'> {g.name} </td>
+            <table className='.custable'>
+              <tbody className='custbody'>
+              <tr className='custr'>
+                <td className='custd'> Customer Name </td>
+                <td className='custd'> {g.name} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> Customer Mobile </td>
-                <td className='td'> {g.id} </td>
+              <tr className='custr'>
+                <td className='custd'> Customer Mobile </td>
+                <td className='custd'> {g.id} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> Customer Status </td>
-                <td className='td'> {(g.active) ? "Active": "Not Active"} </td>
+              <tr className='custr'>
+                <td className='custd'> Customer Status </td>
+                <td className='custd'> {(g.active) ? "Active": "Not Active"} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> Apartment </td>
-                <td className='td'> {g.apartmentNo} {g.apartment} </td>
+              <tr className='custr'>
+                <td className='custd'> Apartment </td>
+                <td className='custd'> {g.apartmentNo} {g.apartment} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> Email </td>
-                <td className='td'> {g.email} </td>
+              <tr className='custr'>
+                <td className='custd'> Email </td>
+                <td className='custd'> {g.email} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> Cleaner Mobile </td>
-                <td className='td'> {g.staffMobile} </td>
+              <tr className='custr'>
+                <td className='custd'> Cleaner Mobile </td>
+                <td className='custd'> {g.staffMobile} </td>
               </tr>
-              <tr className='tr'>
-                <td className='td'> { Cars(g.Cars) } </td>
+              <tr className='custr'>
+                <td className='custd'> { Cars(g.Cars) } </td>
               </tr>
               </tbody>
             </table>
@@ -76,20 +79,37 @@ const Customers = (props) => {
             <i className='material-icons edit'>edit</i>
           </Link>
         </CollapsibleItem>
-        //  <li className="collection-item" key={ g.id } >
-
-        //  </li>
       )
     })
     )
+    console.log(typeof customers + " :::: " + customers.length)
   } else {
-    customers = <h4 style={{ textAlign: 'center' }}>Loading...</h4>
+    //customers = <h4 style={{ textAlign: 'center' }}>Loading...</h4>
+    customers = <div class="progress">
+    <div class="indeterminate"></div>
+</div>
   }
   return (
     <div>
+      <div>
+           Showing ({customers.length})
+        <div className='spannHeaderContainer'>
+          <div className='spannHeader'>Customer Name</div>
+          <div className='spannHeader'>Customer Id</div>
+          <div className='spannHeader'>apartmentNo</div>
+          <div className='spannHeader'>Apartment</div>
+          <div className='spannHeader'>Status</div>
+        </div>
+      </div>
+
+    <div>
+      <div className="divider"></div>
+       <div className="section">
       <Collapsible>
         {customers}
       </Collapsible>
+    </div>
+    </div>
     </div>
   )
 }

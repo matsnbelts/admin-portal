@@ -9,6 +9,11 @@ const jobReducer = (state = initState, action) => {
                 ...state,
                 action
             }
+        case 'GET_JOB_DETAILS':
+            return {
+                ...state,
+                action
+            }
         default:
             return state;
     }

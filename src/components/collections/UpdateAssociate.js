@@ -20,26 +20,26 @@ class UpdateSingleAssociate extends React.Component {
         let { id } = this.props.match.params
         this.props.getAssociate(id)
     }
-componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.getAssociateData !== prevProps.getAssociateData) {
-        console.log('Associate Action Data' + this.props.getAssociateData.action.associate)
-        const associateActionData = this.props.getAssociateData.action.associate
-        const doj = (associateActionData.doj) ? associateActionData.doj.toDate().toDateString() : ""
-        this.setState({
-            ...this.state,
-            name: associateActionData.name,
-            mobile: associateActionData.mobile,
-            idProof: associateActionData.idProof,
-            doj: doj,
-            serviceArea: associateActionData.serviceArea,
-            email: associateActionData.email,
-            active: associateActionData.active,
-        }, function() {
-            console.log(this.state)
-        })
+    componentDidUpdate(prevProps) {
+        // Typical usage (don't forget to compare props):
+        if (this.props.getAssociateData !== prevProps.getAssociateData) {
+            console.log('Associate Action Data' + this.props.getAssociateData.action.associate)
+            const associateActionData = this.props.getAssociateData.action.associate
+            const doj = (associateActionData.doj) ? associateActionData.doj.toDate().toDateString() : ""
+            this.setState({
+                ...this.state,
+                name: associateActionData.name,
+                mobile: associateActionData.mobile,
+                idProof: associateActionData.idProof,
+                doj: doj,
+                serviceArea: associateActionData.serviceArea,
+                email: associateActionData.email,
+                active: associateActionData.active,
+            }, function () {
+                console.log(this.state)
+            })
+        }
     }
-}
 
 handleChange = (e) => {
     this.setState({

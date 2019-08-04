@@ -21,7 +21,7 @@ class JobAssociateFilterOptions extends React.Component {
             <div>
                 <div>
                     <label>Associate:</label>
-                    <select id="associate" value={this.props.associate} onChange={this.changeOption.bind(this)}>
+                    <select className='associate-filter' id="associate" value={this.props.associate} onChange={this.changeOption.bind(this)}>
                         {
                             this.createOptions(this.props.associateOptions)
                         }
