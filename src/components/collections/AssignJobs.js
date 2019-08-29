@@ -30,16 +30,12 @@ class AssignJobs extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.getJobsData !== prevProps.getJobsData) {
-            console.log('Component Did Update')
             const jobActionData = this.props.getJobsData.action.jobs
             this.setState({
                 ...this.state,
                 jobs: jobActionData,
                 showCollapsible: true
             });
-            // jobActionData.map((job) => {
-            //     console.log(job.carId);
-            // })
         }
     }
     handleDateChange = (e) => {
@@ -49,9 +45,6 @@ class AssignJobs extends React.Component {
             showCollapsible: false,
             currentDate: new Date(e.target.value)
         }, function() {
-            console.log(this.state.currentDate.getMonth() + 1);
-            console.log(this.state.currentDate.getFullYear());
-            console.log(this.state.currentDate.getDate());
         });
     }
     handleGetJobButton = () => {
@@ -61,7 +54,6 @@ class AssignJobs extends React.Component {
         });
     }
     startJobScheduler = () => {
-        console.log(this.state.currentDate);
         this.props.scheduleJob(this.state.currentDate);
         this.props.getJobs(this.state.currentDate);
 
@@ -83,7 +75,6 @@ class AssignJobs extends React.Component {
             day = '0' + day
         }
         let year = todayTime.getFullYear();
-        console.log(year + "-" + month + "-" + day)
         return year + "-" + month + "-" + day;
     }
     render() {
@@ -130,7 +121,6 @@ class AssignJobs extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => {
-    console.log('dissssssss');
     return {
         getJobs: (currentDate) => { dispatch(getJobsAction(currentDate)) },
         scheduleJob: (currentDate) => { dispatch(scheduleJobAction(currentDate)) }

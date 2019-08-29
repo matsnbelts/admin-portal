@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import NavBar from './components/layout/NavBar'
 import AddCustomer from './components/collections/AddCustomer';
+import CreateCustomer from './components/collections/CreateCustomer';
 import AddAssociate from './components/collections/AddAssociate';
 import AssociateList from './components/collections/AssociateList';
 import CustomerList from './components/collections/CustomerList';
@@ -19,6 +20,7 @@ class App extends Component {
           <NavBar />
           <Switch>
             <Route path='/add_customer' component={AddCustomer} />
+            <Route path='/create_customer' component={CreateCustomer} />
             <Route path='/add_associate' component={AddAssociate} />
             <Route path='/view_associates' component={AssociateList} />
             <Route path='/view_customers' component={CustomerList} />

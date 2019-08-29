@@ -49,6 +49,16 @@ export const getCustomerAction = (customerId) => {
     }
 }
 
+export const checkCustomerAction = (customerId) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        firestore.collection('customers').doc(customerId).get().then((doc) => {
+            const customer_exists = doc.exists
+            dispatch({ type: 'CUSTOMER_EXISTS', customer_exists })
+        })
+    }
+}
+
 export const updateCustomerAction = (c, customerId) => {
     return (dispatch, getState, { getFirestore }) => {
         let customer = {};

@@ -16,7 +16,6 @@ class JobAssociateFilterForm extends React.Component {
         this.setState({multiple: e.target.value});
     }
     filterItems =(val) => {
-        console.log('value: ' + val)
         this.setState({associate: val});
     }
     render() {
@@ -30,8 +29,6 @@ class JobAssociateFilterForm extends React.Component {
         let associateArray = this.props.parentState.jobs.map((job) => {return job.associateName});
         associateArray.unshift('');
         associateArray = new Set(associateArray);
-        console.log(this.state.associate)
-        console.log(associateArray)
 
         return (
             <div className="container">

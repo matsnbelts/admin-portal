@@ -2,6 +2,7 @@
     width: 80%;
     margin: 0 auto;
 }
+
 .custable {
     border-collapse: collapse;
     border-spacing: 0; 
@@ -16,6 +17,14 @@ font: 14px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
 width: 40%;
 }
 
+.dividerWidth {
+  width: 100%;
+}
+
+.sectionRoot {
+  padding-left: 20px;
+}
+
 .custr {
     overflow-x: scroll;
   }
@@ -27,22 +36,22 @@ width: 40%;
     text-align: left;
     display: block;
     float: left;
-    width: 300px;
+    width: 150px;
     cursor: pointer;
   }
   .spannHeaderContainer {
     height: 60px;
-    margin-left: 60px
+    padding: 30px
   }
   .spann {
-    padding: 15px 15px;
+    /* padding: 15px 15px; */
     font-family: Lato;
     line-height: 24px;
-    font-size: 14px;
+    font-size: 13px;
     text-align: left;
     display: block;
     float: left;
-    width: 300px;
+    width: 150px;
     cursor: pointer;
   }
   .custd {

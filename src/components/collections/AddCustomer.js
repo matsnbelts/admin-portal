@@ -8,12 +8,12 @@ import M from "materialize-css";
 
 
 class AddCustomer extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       Cars: [],
       name: '',
-      mobile: '',
+      mobile: this.props.mobilePropagated,
       apartmentNo: '',
       apartment: '',
       area: '',
@@ -87,15 +87,12 @@ class AddCustomer extends Component {
         break;
       case 'promocode':
         car.promocode = e.target.value;
-        console.log(index + " promocode: " + car.promocode)
         break;
       case 'promoExpiry':
         car.promoexpiry = e.target.value;
-        console.log(index + " promoexpiry: " + car.promoexpiry)
         break;
       case 'startDate':
         car.startDate = e.target.value;
-        console.log("ssssss: " + car.startDate)
         break;
       case 'status':
         car.status = e.target.value;
@@ -144,6 +141,7 @@ class AddCustomer extends Component {
                 <option value="hatchback">Hatchback</option>
                 <option value="suv">SUV</option>
                 <option value="smallcar">SmallCar</option>
+                <option value="bike">Bike</option>
               </select>
               <label>Type</label>
             </div>
@@ -181,7 +179,7 @@ class AddCustomer extends Component {
           <form onSubmit={this.handleAdd} className="col s12">
             <Row>
               <TextInput style={(this.state.name === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} />
-              <TextInput style={(this.state.mobile === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" onChange={this.handleChange} />
+              <TextInput style={(this.state.mobile === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Mobile" id="mobile" type="text" disabled={true} value={this.state.mobile}/>
             </Row>
             <Row>
               <TextInput style={(this.state.apartmentNo === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s12" label="Apartment No" id="apartmentNo" type="text" onChange={this.handleChange} />
@@ -212,8 +210,6 @@ class AddCustomer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('Map Customer state to props--------')
-  console.log(state.customer)
   return {
     customer: state.customer
   }

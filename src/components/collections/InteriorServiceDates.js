@@ -13,7 +13,7 @@ class InteriorServiceDates extends React.Component {
                             'September', 'October', 'November', 'December']
         console.log(new Date().toDateString())
         this.state = {
-            apartment: 'Karapakkam',
+            apartment: 'Vaikund Sundaram',
             currentMonth: this.months.indexOf(moment().format("MMMM")) + 1,
             currentYear: moment().format("Y"),
             dates: new Set([]),
@@ -34,18 +34,12 @@ class InteriorServiceDates extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.getInteriorServiceAvailabilityData !== prevProps.getInteriorServiceAvailabilityData) {
             console.log('Component Did Update')
-            const getInteriorServiceAvailabilityDates = this.props.getInteriorServiceAvailabilityData.action.dates.dates
-            const datesState = this.state.dates
+            const getInteriorServiceAvailabilityDates = this.props.getInteriorServiceAvailabilityData.action.dates
+            let datesState = new Set()
             getInteriorServiceAvailabilityDates.map((dat) => {
-                console.log(dat.toDate().toDateString())
-                datesState.add(dat.toDate().toDateString())
+                datesState.add(dat)
             })
-            // if(!this.props.getInteriorServiceAvailabilityData.submitted) {
-            //     this.props.getInteriorServiceAvailabilityData.submitted = false
-            // } else {
-            //     console.log('submitted: ' + this.props.getInteriorServiceAvailabilityData.submitted)
-            // }
-            console.log(this.state.loading);
+            console.log(getInteriorServiceAvailabilityDates);
             this.setState({
                 ...this.state,
                 dates: datesState,
@@ -57,9 +51,6 @@ class InteriorServiceDates extends React.Component {
 
     fetchDates = () => {
         this.props.getInteriorServiceAvailability(this.state.apartment);
-        // this.setState({
-        //     showCalendar: true,
-        // });
     }
 
     setDates = () => {
@@ -78,7 +69,6 @@ class InteriorServiceDates extends React.Component {
           this.setState({
             currentYear: year,
           })
-          console.log(year)
       }
 
       onMonthChange = (currentMonth) => {
@@ -86,7 +76,6 @@ class InteriorServiceDates extends React.Component {
         this.setState({
             currentMonth: month,
           })
-          console.log(currentMonth)
           //this.props.getInteriorServiceAvailability(this.state.area, this.state.currentYear, this.state.currentMonth);
       }
 
@@ -148,7 +137,7 @@ class InteriorServiceDates extends React.Component {
                         <label className="apartmentLabel">Apartment</label>
                         <select style={select_style} required aria-required="true" id={"apartment"} onChange={(e) => this.handleApartmentChange(e)}>
                             <option value="" disabled >Choose your option</option>
-                            <option value="Karapakkam">Karapakkam</option>
+                            <option value="Vaikund Sundaram">Vaikund Sundaram</option>
                         </select>
                     </div>
                     </Row>

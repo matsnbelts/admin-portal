@@ -7,7 +7,6 @@ import { Collapsible, CollapsibleItem, Container } from 'react-materialize'
 import './CustomerList.css'
 
 const Cars = (props) => {
-  console.log('-------------------')
   for(let [carNo, car] of Object.entries(props)) {
     console.log(carNo + " : " + car.model)
     return (
@@ -20,6 +19,14 @@ const Cars = (props) => {
       // </CollapsibleItem>
     )
   } 
+}
+const getStyles = () => {
+  return Object.assign(
+    {},
+    {
+      width: "100%"
+    }
+  );
 }
 
 const Customers = (props) => {
@@ -35,9 +42,10 @@ const Customers = (props) => {
             <div className='spann'>{g.customerId}</div>
             <div className='spann'>{g.apartmentNo}</div>
             <div className='spann'>{g.apartment}</div>
+            <div className='spann'>{g.id}</div>
             <div className='spann'>{(g.active) ? "Active": "Not Active"}</div>
           </div>
-          } icon='filter_drama'>
+          }>
             <table className='.custable'>
               <tbody className='custbody'>
               <tr className='custr'>
@@ -82,7 +90,6 @@ const Customers = (props) => {
       )
     })
     )
-    console.log(typeof customers + " :::: " + customers.length)
   } else {
     //customers = <h4 style={{ textAlign: 'center' }}>Loading...</h4>
     customers = <div class="progress">
@@ -90,20 +97,23 @@ const Customers = (props) => {
 </div>
   }
   return (
-    <div>
       <div>
+        <div className='spannHeaderContainer'>
            Showing ({customers.length})
+        </div>
         <div className='spannHeaderContainer'>
           <div className='spannHeader'>Customer Name</div>
           <div className='spannHeader'>Customer Id</div>
           <div className='spannHeader'>apartmentNo</div>
           <div className='spannHeader'>Apartment</div>
+          <div className='spannHeader'>Mobile</div>
           <div className='spannHeader'>Status</div>
-        </div>
       </div>
 
-    <div>
-      <div className="divider"></div>
+    <div className='sectionRoot'>
+      <div className='dividerWidth'>
+        <div className="divider" style={getStyles()}></div>
+      </div>
        <div className="section">
       <Collapsible>
         {customers}

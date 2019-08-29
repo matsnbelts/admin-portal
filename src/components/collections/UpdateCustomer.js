@@ -218,6 +218,7 @@ class UpdateSingleCustomer extends React.Component {
                             <option value="Hatchback">Hatchback</option>
                             <option value="SUV">SUV</option>
                             <option value="Small Car">Small Car</option>
+                            <option value="bike">Bike</option>
                         </select>
 
                         <label>Type</label>

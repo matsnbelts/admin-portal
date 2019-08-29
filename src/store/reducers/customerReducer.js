@@ -33,6 +33,11 @@ const initState = {
         case 'GET_CUSTOMER_ERROR':
             console.log('get customer error', action.err);
             return state;
+        case 'CUSTOMER_EXISTS':
+            console.log('CUSTOMER_EXISTS', action.customer_exists);
+            return {
+                ...state.customer_exists = action.customer_exists,
+            }
         default:
             return state;
     }
