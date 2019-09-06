@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
-import { Collapsible, CollapsibleItem, Container } from 'react-materialize'
+import { Collapsible, CollapsibleItem, Button, TextInput } from 'react-materialize'
 import './CustomerList.css'
+import Input from '@material-ui/core/Input';
+import { TextField } from '@material-ui/core';
 
 const Cars = (props) => {
   for(let [carNo, car] of Object.entries(props)) {
@@ -28,15 +30,23 @@ const getStyles = () => {
     }
   );
 }
-
+const getStylesSearch = () => {
+  return Object.assign(
+    {},
+    {
+      width: "50%",
+      height: "2rem",
+      margin: '10px'
+    }
+  );
+}
 const Customers = (props) => {
-  console.log(props.customer)
   const { customer } = props
   let customers
   if (customer) {
     customers = (customer.map(g => {
       return (
-        <CollapsibleItem key={g.name + " " + g.customerId} header={
+        <CollapsibleItem key={g.name + " " + g.id} header={
           <div>
             <div className='spann'>{g.name}</div>
             <div className='spann'>{g.customerId}</div>
@@ -99,7 +109,15 @@ const Customers = (props) => {
   return (
       <div>
         <div className='spannHeaderContainer'>
-           Showing ({customers.length})
+           <div className='floatLeft'>Showing ({customers.length})</div>
+           <div className='floatRight'>
+              <form onSubmit='{}' className="col s12">
+              <input aria-invalid="false" style={getStylesSearch()} class="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text" value="" />
+        {/* <Button className="#000000 black">Search</Button> */}
+        <button aria-label="" tabindex="0"> <span>Search</span> </button>
+                </form>
+           </div>
+
         </div>
         <div className='spannHeaderContainer'>
           <div className='spannHeader'>Customer Name</div>

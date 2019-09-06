@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 export const getJobsAction = (currentDate) => {
     return (dispatch, getState, { getFirestore }) => {
@@ -6,7 +7,6 @@ export const getJobsAction = (currentDate) => {
         firestore.collection('associates').get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 const associate = doc.data()
-                //console.log(associate.name)
                 associateMap[doc.id] = associate.name;
             });
         });
@@ -20,9 +20,7 @@ export const getJobsAction = (currentDate) => {
                 querySnapshot.forEach(function(doc) {
                     job = doc.data();
                     job.carId = doc.id;
-                    //console.log(job.associateId);
                     job.associateName = associateMap[job.associateId];
-                    //console.log(job.associateId + " - " + job.associateName);
                     jobs.push(job);
                 })
                 dispatch({ type: 'JOBS_LIST', jobs })
@@ -37,8 +35,6 @@ export const getJobsAction = (currentDate) => {
 export const getJobDetailsAction = (carId, dateToNavigate) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
-
-        let jobs = [];
         dateToNavigate = new Date(dateToNavigate)
         console.log('' + dateToNavigate.getFullYear() + (dateToNavigate.getMonth() + 1) +
         dateToNavigate.getDate() + carId)
@@ -72,9 +68,40 @@ export const updateJobAction = (updatedJob, carId, dateToNavigate) => {
                                 );
     }
 }
+
+export const reassignJobAction = (currentDate, associateFrom, associateTo) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        // let currentDate = new Date(dateToNavigate)
+        let carsCollectionRef = firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
+        .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
+            .collection("cars")
+        carsCollectionRef.where('associateId', '==', associateFrom) 
+        .get()
+        .then(
+            function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    let carNo = doc.id;
+                    let carInfo = doc.data();
+                    carInfo.associateId = associateTo;
+                    firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
+                                .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
+                                .collection("cars").doc(carNo).set(carInfo, {merge: true});
+                })
+            })
+            .catch(function(error) {
+                console.log("Error getting active customer documents: ", error);
+                const reassigned = true;
+                dispatch({ type: 'REASSIGN_JOB_ERROR',  reassigned});
+            });
+            const reassigned = true;
+            dispatch({ type: 'REASSIGN_JOB',  reassigned});
+    }
+}
+
 export const scheduleJobAction = (currentDate) => {
     
-    function getCarMap(customerId, associateId) {
+    function getCarMap(customerId, associateId, serviceType) {
         return {
           associateFeedback: "",
           associateId: associateId,
@@ -82,11 +109,29 @@ export const scheduleJobAction = (currentDate) => {
           customerAvailability: true,
           customerFeedback: "",
           customerId: customerId,
-          serviceType: "Exterior",
+          serviceType: serviceType,
           supervisorFeedback: "",
           supervisorId: ""
         };
       }
+
+    function isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId) {
+        let interServiceDate = firestore.collection('interior_service_dates').doc(customerApartment).collection('Dates').doc(todate)
+                                        .get();
+        interServiceDate.then((interServiceDateDoc) => {
+            if(!interServiceDateDoc.exists) {
+                firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
+                .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
+                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, 'Exterior'), {merge: false});
+                return;
+            }
+            let interiorCarsList = interServiceDateDoc.data.Cars;
+            let serviceType = interiorCarsList.includes(carModel) ? 'Interior' : 'Exterior';
+            firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
+            .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
+            .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, serviceType), {merge: false});
+        })
+    }
 
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firestore = getFirestore()
@@ -99,23 +144,32 @@ export const scheduleJobAction = (currentDate) => {
                         // doc.data() is never undefined for query doc snapshots
                         let customerId = doc.id;
                         let customerInfo = doc.data()
-                        console.log(doc.id, " => ", doc.data());
                         /** */
+                        let customerApartment = customerInfo.apartment;
                         let carsMap = customerInfo.Cars;
                         let associateId = customerInfo.staffMobile;
                         for(let [carModel, value] of Object.entries(carsMap)) {
                             if(!value.status) {
                               continue;
                             }
-                            // TODO: check if today customer has scheduled for interior cleaning from
-                            //    interior_service_availability
-                            // TODO: check if today exterior service available from admin logic
-                            firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
-                                .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
-                                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId), {merge: false});
+                            //TODO: check if today customer is available - {currentDate, carModel}
+                            let todate = moment(currentDate).get("date") + '-' + (moment(currentDate).get("month") + 1) + '-' +moment(currentDate).get("year");
+                            let customerUnavailabilityDate = firestore.collection('customer_unavailability').doc(customerApartment).collection('Dates').doc(todate)
+                                .get();
+                            customerUnavailabilityDate.then((customerUnavailabilityDateDoc) => {
+                                if(!customerUnavailabilityDateDoc.exists) {
+                                    console.log('nooooo')
+                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId);
+                                    return;
+                                }
+                                let customerUnavailabilityCarsList = customerUnavailabilityDateDoc.data.Cars;
+                                if(!customerUnavailabilityCarsList.includes(carModel)) {
+                                   // TODO: check if today customer has scheduled for interior cleaning from
+                                    //    interior_service_availability
+                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId);
+                                }
+                            })
                           }
-                          /** */
-
                     });
                 })
                 .catch(function(error) {

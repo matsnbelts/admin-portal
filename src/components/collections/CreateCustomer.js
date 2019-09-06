@@ -36,11 +36,13 @@ class CreateCustomer extends React.Component {
     handleMobileAdd = (e) => {
         e.preventDefault();
         console.log(this.state.mobile)
-        this.props.checkCustomerExists(this.state.mobile);
-        this.setState({
-            ...this.state,
-            verified: true
-        });
+        if (this.state.mobile !== '') {
+            this.props.checkCustomerExists(this.state.mobile);
+            this.setState({
+                ...this.state,
+                verified: true
+            });
+        }
     }
 
     render() {

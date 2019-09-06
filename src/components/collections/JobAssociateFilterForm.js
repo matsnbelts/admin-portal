@@ -31,13 +31,15 @@ class JobAssociateFilterForm extends React.Component {
         associateArray = new Set(associateArray);
 
         return (
-            <div className="container">
-              <JobAssociateFilterOptions 
-                  associate={this.state.associate}
-                  associateOptions={associateArray}
-                  changeOption={this.filterItems} />
+            <div className="jobContainer">
+              <div className='jobFilterBox'>
+                <span className='showingJobs'>{'Showing Jobs (' + filteredJobItems.length + ')'}</span>
+                <JobAssociateFilterOptions 
+                    associate={this.state.associate}
+                    associateOptions={associateArray}
+                    changeOption={this.filterItems} />
+              </div>
               <div className="filter-form">
-                <div>{'Showing Jobs (' + filteredJobItems.length + ')'}</div>
                 <div className="divider"></div>
                 <JobAssociateFilterItems data={filteredJobItems} dateData={this.props.parentState.currentDate}/>
               </div>

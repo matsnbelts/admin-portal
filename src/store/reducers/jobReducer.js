@@ -14,6 +14,16 @@ const jobReducer = (state = initState, action) => {
                 ...state,
                 action
             }
+        case 'REASSIGN_JOB':
+            return {
+                ...state,
+                action
+            }
+        case 'REASSIGN_JOB_ERROR':
+            return {
+                ...state,
+                action
+            }
         default:
             return state;
     }

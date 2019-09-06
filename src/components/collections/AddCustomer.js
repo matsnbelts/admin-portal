@@ -5,7 +5,7 @@ import { Container, Button, TextInput, Row } from 'react-materialize';
 import { connect } from 'react-redux'
 import { addCustomer } from '../../store/actions/customerActions'
 import M from "materialize-css";
-
+import { withRouter } from "react-router";
 
 class AddCustomer extends Component {
   constructor(props) {
@@ -220,4 +220,4 @@ const mapDispatchToProps = (dispatch) => {
     addCustomer: (customer) => dispatch(addCustomer(customer))
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(AddCustomer)
+export default connect(mapStateToProps, mapDispatchToProps) (withRouter(AddCustomer))

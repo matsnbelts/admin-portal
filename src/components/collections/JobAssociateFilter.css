@@ -22,8 +22,47 @@
   label, select {
     margin-right: 10px;
   } */
+  .associateFilterOptionsContainer {
+    display: flex
+  }
+
   .associate-filter {
     width: 50%;
     margin-right: 10px;
     display: flex
+  }
+  .associateLabel {
+    padding-top: 7px;
+    font-size: 0.9em;
+  }
+  .collapsibleContainer {
+    margin-top: 20px
+  }
+
+  .itemsHeader {
+    /* height: 55px;
+    
+    padding-top: 20px; */
+    display: flex;
+    margin-left: 55px;
+  }
+
+  .jobContainer {
+    width: 90%
+  }
+
+  .jobFilterBox {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+  }
+
+  .showingJobs {
+    height: 40px;
+    padding: 5px;
+    font-size: 0.9em;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid #d0d0d0
   }

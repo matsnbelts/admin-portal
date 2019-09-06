@@ -1,39 +1,208 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Container, Button, TextInput, Row, Switch, Collapsible, CollapsibleItem} from 'react-materialize';
-import { getCustomerAction, updateCustomerAction } from '../../store/actions/customerActions'
-import M from "materialize-css";
+import { firestoreConnect } from 'react-redux-firebase'
+import { compose } from 'redux'
+import { Collapsible, CollapsibleItem, Button, TextInput } from 'react-materialize'
+import './CustomerList.css'
+import Input from '@material-ui/core/Input';
+import { TextField } from '@material-ui/core';
 
-class UpdateSingleCustomer extends React.Component {
-    constructor() {
-        super();
+class CustList extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
+            customers_state: props.customer,
             Cars: [],
-            name: '',
-            mobile: '',
-            apartmentNo: '',
-            apartment: '',
-            area: '',
-            email: '',
-            staffMobile: '',
-            active: true,
+            searchCustomerName: 'all',
             car_form_data: {}
         }
     }
+
     componentDidMount() {
-        let { id } = this.props.match.params
-        this.props.getCustomer(id)
+        console.log('Component Did Mount')
     }
+    componentDidUpdate(prevProps) {
+        //console.log('Component Did Update')
+    }
+    handleSearch = (e) => {
+        e.preventDefault()
+    }
+
+    handleSearchChange = (e) => {
+        e.preventDefault()
+        this.setState({
+            ...this.state,
+            [e.target.id]: e.target.value ? e.target.value.toLowerCase() : 'all'
+          }, () => {
+            console.log(this.state.searchCustomerName) 
+          })  
+    }
+    render() {
+    const Cars = (props) => {
+        for (let [carNo, car] of Object.entries(props)) {
+            return (
+                <div>
+                    <div> {carNo} </div>
+                    <div> {car.model}</div>
+                </div>
+            )
+        }
+    }
+    const getStyles = () => {
+        return Object.assign(
+            {},
+            {
+                width: "100%"
+            }
+        );
+    }
+    const getSectionStyles = () => {
+        return Object.assign(
+            {},
+            {
+                'margin-right': '10px'
+            }
+        );
+    }
+    const getSearchButtonStyle = () => {
+        return Object.assign(
+            {},
+            {
+                'background-color': 'black',
+                color: 'white',
+                'border-radius': '5px',
+                padding: '5px 10px'
+            }
+        );
+    }
+
+    const getStylesSearch = () => {
+        return Object.assign(
+            {},
+            {
+                width: "50%",
+                height: "2rem",
+                margin: '10px'
+            }
+        );
+    }
+    const Customers = () => {
+        const { customer } = this.props;
+        let customers;
+        if (customer) {
+            let filteredCustomers;
+            if(this.state.searchCustomerName !== 'all') {
+                filteredCustomers = customer.filter(c => 
+                    (c.name && c.name.toLowerCase().includes(this.state.searchCustomerName)) ||
+                    (c.customerId && c.customerId.toLowerCase().includes(this.state.searchCustomerName)) ||
+                    (c.apartmentNo && c.apartmentNo.toLowerCase().includes(this.state.searchCustomerName)) ||
+                    (c.apartment && c.apartment.toLowerCase().includes(this.state.searchCustomerName)) ||
+                    (c.id && c.id.toLowerCase().includes(this.state.searchCustomerName))
+                );
+            } else {
+                filteredCustomers = customer;
+            }
+            customers = (filteredCustomers.map(g => {
+                return (
+                    <CollapsibleItem key={g.name + " " + g.id} header={
+                        <div>
+                            <div className='spann'>{g.name}</div>
+                            <div className='spann'>{g.customerId ? g.customerId: 'N/A'}</div>
+                            <div className='spann'>{g.apartmentNo ? g.apartmentNo: 'N/A'}</div>
+                            <div className='spann'>{g.apartment ? g.apartment: 'N/A'}</div>
+                            <div className='spann'>{g.id ? g.id: 'N/A'}</div>
+                            <div className='spann'>{(g.active) ? "Active" : "Not Active"}</div>
+                        </div>
+                    }>
+                        <table className='.custable'>
+                            <tbody className='custbody'>
+                                <tr className='custr'>
+                                    <td className='custd'> Customer Name </td>
+                                    <td className='custd'> {g.name} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> Customer Mobile </td>
+                                    <td className='custd'> {g.id} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> Customer Status </td>
+                                    <td className='custd'> {(g.active) ? "Active" : "Not Active"} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> Apartment </td>
+                                    <td className='custd'> {g.apartmentNo} {g.apartment} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> Email </td>
+                                    <td className='custd'> {g.email} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> Cleaner Mobile </td>
+                                    <td className='custd'> {g.staffMobile} </td>
+                                </tr>
+                                <tr className='custr'>
+                                    <td className='custd'> {Cars(g.Cars)} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <Link className='secondary-content' to={`customer/${g.id}`}>
+                            <i className='material-icons edit'>edit</i>
+                        </Link>
+                    </CollapsibleItem>
+                )
+            })
+            )
+        } else {
+            customers = <div className="progress">
+                <div className="indeterminate"></div>
+            </div>
+        }
+        return (
+            <div>
+                <div className='spannHeaderContainer'>
+                    <span className='showingJobsCustomer'>Showing ({customers.length})</span>
+                    <div className='floatRight'>
+                        <form onSubmit={this.handleSearch} className="col s12">
+                            <input aria-invalid="false" id='searchCustomerName' style={getStylesSearch()} onChange={this.handleSearchChange} style={getStylesSearch()} class="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text"/>
+                            <button aria-label="" style={getSearchButtonStyle()} tabindex="0"> <span>Search</span> </button>
+                        </form>
+                    </div>
+
+                </div>
+                <div className='spannHeaderContainer'>
+                    <div className='spannHeader'>Customer Name</div>
+                    <div className='spannHeader'>Customer Id</div>
+                    <div className='spannHeader'>ApartmentNo</div>
+                    <div className='spannHeader'>Apartment</div>
+                    <div className='spannHeader'>Mobile</div>
+                    <div className='spannHeader'>Status</div>
+                </div>
+
+                <div className='sectionRoot'>
+                    <div className='dividerWidth'>
+                        <div className="divider" style={getStyles()}></div>
+                    </div>
+                    <div className="section"  style={getSectionStyles()}>
+                        <Collapsible>
+                            {customers}
+                        </Collapsible>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    return (<div>{Customers()}</div> )
 }
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getCustomer: (id) => { dispatch(getCustomerAction(id)) },
-        updateCustomer: (updatedCustomer, id) => { dispatch(updateCustomerAction(updatedCustomer, id)) }
-    }
 }
 const mapStateToProps = (state) => {
     return {
-        getCustomerData: state.customer
+        customer: state.firestoreDocs.ordered.customers
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateSingleCustomer)
+export default compose(
+    connect(mapStateToProps, null),
+    firestoreConnect([
+        { collection: 'customers' }
+    ])
+)(CustList)

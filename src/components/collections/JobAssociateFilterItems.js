@@ -14,9 +14,10 @@ class JobAssociateFilterItems extends React.Component {
       const showJobs = this.props.data.length > 0 ? this.props.data.map((job, index) => (
         <CollapsibleItem key={job.carId} header={
           <div>
-          <div className='spann'>{job.carId}</div>
-          <div className='spann'>{job.customerId}</div>
-          <div className='spann'>{job.associateName}</div>
+          <div className='spann'>{job.carId ? job.carId: 'N/A'}</div>
+          <div className='spann'>{job.customerId ? job.customerId: 'N/A'}</div>
+          <div className='spann'>{job.associateName ? job.associateName: 'N/A'}</div>
+          <div className='spann'>{job.serviceType ? job.serviceType: 'N/A'}</div>
         </div>} icon='filter_drama'>
 
         <table className='table'>
@@ -70,16 +71,24 @@ class JobAssociateFilterItems extends React.Component {
         <div>No Cars assigned yet</div>
     );
         return (
-          <Collapsible> 
+          <div className='collapsibleContainer'>
+            <div className='itemsHeader'>
+              <div className='spann'>Car Number</div>
+              <div className='spann'>Customer Mobile</div>
+              <div className='spann'>Associate Name</div>
+              <div className='spann'>Service Type</div>
+            </div>
+            <Collapsible> 
 
-            {/* {this.props.data.map((job) => {
-              return (
-                // <div className="filter-item">{job.associateName}</div>
-              );
-            })} */}
-            {showJobs}
+              {/* {this.props.data.map((job) => {
+                return (
+                  // <div className="filter-item">{job.associateName}</div>
+                );
+              })} */}
+              {showJobs}
 
-            </Collapsible>
+              </Collapsible>
+            </div>
           );
     }
 }

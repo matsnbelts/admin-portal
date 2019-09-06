@@ -49,6 +49,91 @@ export const getCustomerAction = (customerId) => {
     }
 }
 
+export const customerSheetUploadAction = (csvData) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        for(let [id, customerData] of Object.entries(csvData)) {
+            if(!customerData.Mobile || !customerData.CarNo) {
+                continue;
+            }
+            const customerId = '+91' + customerData.Mobile;
+            firestore.collection('customers').doc(customerId).get().then((doc) => {
+                let customer = {};
+                let staffMobile = customerData.StaffMobile ? '+91' + customerData.StaffMobile: '';
+                if(!doc.exists) {
+                    //////
+                    customer.active = (customerData.CustomerStatus == 'Y');
+                    customer.staffMobile = staffMobile;
+                    customer.apartment = customerData.Apartment ? customerData.Apartment : '';
+                    customer.apartmentNo = customerData.ApartmentNo ? customerData.ApartmentNo : '';
+                    customer.name = customerData.ContactName ? customerData.ContactName : '';
+                    customer.mobile = customerId;
+                    customer.email = customerData.EmailAddress ? customerData.EmailAddress : '';
+                    customer.customerId = customerData.CustomerId ? customerData.CustomerId : '';
+
+                    let car = {};
+                    let Cars = {};
+                        car.no = customerData.CarNo;
+                        car.model = customerData.Car ? customerData.Car : '';
+                        car.status = (customerData.Active == 'Y');
+                        console.log(customerData.StartDate + " ---- " + new Date(customerData.StartDate));
+                        car.startDate = (!customerData.StartDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(customerData.StartDate));
+                        car.promoCode = customerData.Promocode ? customerData.Promocode : '';
+                        car.pack = customerData.Pack ? customerData.Pack : '';
+                        Cars[car.no] = car;
+                        //console.log(customerData)
+                        customer.Cars = Cars;
+                    //////
+                } else {
+                    customer = doc.data();
+                    //////
+                    customer.active = ((customerData.CustomerStatus != 'Y' && customer.active) || (customerData.CustomerStatus == 'Y' && !customer.active)) ? !customer.active : customer.active;
+                    customer.staffMobile = (customer.staffMobile != staffMobile) ? staffMobile : customer.staffMobile;
+                    customer.apartment = (customerData.Apartment && customer.apartment != customerData.Apartment) ? customerData.Apartment : customer.apartment;
+                    customer.apartmentNo = (customerData.ApartmentNo && customer.apartmentNo != customerData.ApartmentNo) ? customerData.ApartmentNo : customer.apartmentNo;
+                    customer.email = (customerData.EmailAddress && customer.email != customerData.EmailAddress) ? customerData.EmailAddress : customer.email;
+                    customer.customerId = (customerData.CustomerId && customer.customerId != customerData.CustomerId) ? customerData.CustomerId : customer.customerId;
+                    //////
+                    const cars_list = customer.Cars;
+                    let Cars = {};
+                    if(!customerData.CarNo in cars_list || !cars_list[customerData.CarNo]) {
+                        let car = {};
+                        car.no = customerData.CarNo;
+                        car.model = customerData.Car ? customerData.Car : '';
+                        car.status = (customerData.Active == 'Y');
+                        car.startDate = (!customerData.StartDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(customerData.StartDate));
+                        car.promoCode = customerData.Promocode ? customerData.Promocode : '';
+                        car.pack = customerData.Pack ? customerData.Pack : '';
+                        Cars[car.no] = car;
+                        customer.Cars = Cars;
+                    } else {
+                        // look for potential fields to update
+                        if(!cars_list) {
+                            console.log('emmmmmmmm--------' + customerData.CarNo)
+                        }
+                        if(!cars_list[customerData.CarNo]) {
+                            console.log('uuuuuuuuunnnnnnn--------' + customerData.CarNo)
+                        }
+                        let car = cars_list[customerData.CarNo];
+                        console.log(customerData.CarNo);
+                        console.log(car);
+                        car.model = (car.model != customerData.Car) ? customerData.Car : car.model;
+                        car.status = car.status ? car.status : true;
+                        car.status = ((customerData.Active != 'Y' && car.status) || (customerData.Active == 'Y' && !car.status)) ? !car.status : car.status;
+                        car.promoCode = (car.promoCode != customerData.Promocode) ? customerData.Promocode : car.promoCode;
+                        Cars[car.no] = car;
+                        customer.Cars = Cars;
+                    }
+                }
+                console.log(customer);
+                firestore.collection('customers').doc(customerId).set({
+                    ...customer
+                }, {merge: true});
+            })
+        }
+    }
+}
+
 export const checkCustomerAction = (customerId) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()

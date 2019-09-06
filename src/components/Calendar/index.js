@@ -48,9 +48,15 @@ export default class Calendar extends React.Component {
         return this.state.dateContext.daysInMonth();
     }
     currentDate = () => {
-        console.log("currentDate: ", this.state.dateContext.get("date"));
+        console.log("currentDate: ", this.state.dateContext.get("year") + " : "
+         + (this.state.dateContext.get("month") + 1));
         return this.state.dateContext.get("date");
     }
+
+    currentMonth = () => {
+        return this.state.dateContext.get("month") + 1;
+    }
+
     currentDay = () => {
         return this.state.dateContext.format("D");
     }
@@ -236,7 +242,7 @@ export default class Calendar extends React.Component {
 
         let daysInMonth = [];
         for (let d = 1; d <= this.daysInMonth(); d++) {
-            let className = (d == this.currentDay() ? "day current-day": "day");
+            let className = ((d === this.currentDate() && (moment().get('month') + 1) === this.currentMonth()) ? "day current-day": "day");
             //let selectedClass = (d == this.state.selectedDay ? " selected-day " : "")
             let currentSelectedDate = new Date(d + ' ' + this.month() + ' ' + this.year()).toDateString()
             let selectedClass = (this.state.dates.has(currentSelectedDate) ? " selected-day " : "")
@@ -261,7 +267,7 @@ export default class Calendar extends React.Component {
                 rows.push(insertRow);
                 cells = [];
             }
-            if (i === totalSlots.length - 1 && cells.length != 0) {
+            if (i === totalSlots.length - 1 && cells.length !== 0) {
                 let insertRow = cells.slice();
                 rows.push(insertRow);
             }

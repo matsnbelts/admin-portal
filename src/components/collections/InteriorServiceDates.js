@@ -138,6 +138,13 @@ class InteriorServiceDates extends React.Component {
                         <select style={select_style} required aria-required="true" id={"apartment"} onChange={(e) => this.handleApartmentChange(e)}>
                             <option value="" disabled >Choose your option</option>
                             <option value="Vaikund Sundaram">Vaikund Sundaram</option>
+                            <option value="Bhagyam Pragathi">Bhagyam Pragathi</option>
+                            <option value="Casa Grande Cherryl Brook">Casa Grande Cherryl Brook</option>
+                            <option value="DLF">DLF</option>
+                            <option value="Deccan">Deccan</option>
+                            <option value="Lancor Altura">Lancor Altura</option>
+                            <option value="Tamarai">Tamarai</option>
+                            <option value="Nakshatra">Nakshatra</option>
                         </select>
                     </div>
                     </Row>

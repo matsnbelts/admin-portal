@@ -1,0 +1,26 @@
+.fetchJob {
+    margin: 25px;
+  }
+
+.startJob {
+    background: black;
+    color: whitesmoke;
+    margin-right: 10px;
+    /* float: left; */
+  }
+
+.jobButtons {
+    margin: 20px;
+    height: 30px;
+}
+
+.jobButtonsContainer {
+    /* float: right; */
+    display: flex;
+    justify-content: flex-end;
+}
+.reassignAssociate {
+    background: black;
+    color: whitesmoke;
+    /* float: right; */
+  }
