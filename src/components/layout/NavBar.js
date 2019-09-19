@@ -50,6 +50,7 @@ const NavBar = () => {
           <li><a className="dropdown-trigger" href="#!" data-target="manage-dropdown">Admin<i className="material-icons right">arrow_drop_down</i></a></li>
         </ul> */}
         <Dropdown className="#000000 black" trigger={<div className="right hide-on-med-and-down">Customer<i className="material-icons right">arrow_drop_down</i></div>}>
+          <NavItem href="/upload">CSV Upload</NavItem>
           <NavItem href="/create_customer">Add Customer</NavItem>
           <NavItem href="/view_customers">View Customers</NavItem>
         </Dropdown>

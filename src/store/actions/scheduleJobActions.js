@@ -158,7 +158,6 @@ export const scheduleJobAction = (currentDate) => {
                                 .get();
                             customerUnavailabilityDate.then((customerUnavailabilityDateDoc) => {
                                 if(!customerUnavailabilityDateDoc.exists) {
-                                    console.log('nooooo')
                                     isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId);
                                     return;
                                 }

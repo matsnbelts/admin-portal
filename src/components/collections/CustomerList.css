@@ -17,6 +17,17 @@ font: 14px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
 width: 40%;
 }
 
+.uplcustable {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: #4a4a4d;
+  border-style: solid;
+  float: center;
+  color: #4a4a4d;
+  font: 12px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  width: 40%;
+  }
+
 .dividerWidth {
   width: 100%;
 }
@@ -66,8 +77,14 @@ width: 40%;
     line-height: 24px;
     font-size: 14px;
     text-align: left;
+    border-style: solid;
   }
  
+  .uplcustbody {
+    max-width: 90%;
+    background: #f0f0f2;
+    color: black;
+  }
   .custbody {
     max-width: 100%;
   }
@@ -78,6 +95,12 @@ width: 40%;
   .custbody tr:hover {
     background: black;
     color: whitesmoke;
+  }
+  .custbutton {
+    background: black;
+    color: whitesmoke;
+    padding: 5px;
+    border-radius: 5px; 
   }
   .custd {
     padding: 15px 15px;

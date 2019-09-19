@@ -40,14 +40,15 @@ class CustList extends React.Component {
     }
     render() {
     const Cars = (props) => {
-        for (let [carNo, car] of Object.entries(props)) {
-            return (
-                <div>
-                    <div> {carNo} </div>
-                    <div> {car.model}</div>
-                </div>
-            )
-        }
+        if(props)
+            for (let [carNo, car] of Object.entries(props)) {
+                return (
+                    <div>
+                        <div> {carNo} </div>
+                        <div> {car.model}</div>
+                    </div>
+                )
+            }
     }
     const getStyles = () => {
         return Object.assign(
@@ -61,7 +62,7 @@ class CustList extends React.Component {
         return Object.assign(
             {},
             {
-                'margin-right': '10px'
+                'marginRight': '10px'
             }
         );
     }
@@ -69,9 +70,9 @@ class CustList extends React.Component {
         return Object.assign(
             {},
             {
-                'background-color': 'black',
+                'backgroundColor': 'black',
                 color: 'white',
-                'border-radius': '5px',
+                'borderRadius': '5px',
                 padding: '5px 10px'
             }
         );
@@ -164,8 +165,8 @@ class CustList extends React.Component {
                     <span className='showingJobsCustomer'>Showing ({customers.length})</span>
                     <div className='floatRight'>
                         <form onSubmit={this.handleSearch} className="col s12">
-                            <input aria-invalid="false" id='searchCustomerName' style={getStylesSearch()} onChange={this.handleSearchChange} style={getStylesSearch()} class="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text"/>
-                            <button aria-label="" style={getSearchButtonStyle()} tabindex="0"> <span>Search</span> </button>
+                            <input aria-invalid="false" id='searchCustomerName' style={getStylesSearch()} onChange={this.handleSearchChange} style={getStylesSearch()} className="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text"/>
+                            <button aria-label="" style={getSearchButtonStyle()} tabIndex="0"> <span>Search</span> </button>
                         </form>
                     </div>
 

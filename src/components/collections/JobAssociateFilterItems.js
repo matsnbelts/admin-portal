@@ -18,6 +18,11 @@ class JobAssociateFilterItems extends React.Component {
           <div className='spann'>{job.customerId ? job.customerId: 'N/A'}</div>
           <div className='spann'>{job.associateName ? job.associateName: 'N/A'}</div>
           <div className='spann'>{job.serviceType ? job.serviceType: 'N/A'}</div>
+          <div className='spann'>{job.cleaningStatus ? job.cleaningStatus: 'N/A'}</div>
+          <div className='spann'>{job.customerAvailability ? job.customerAvailability: 'N/A'}</div>
+          <div className='spann'>{job.customerFeedback ? job.customerFeedback: 'N/A'}</div>
+          <div className='spann'>{job.associateFeedback ? job.associateFeedback: 'N/A'}</div>
+
         </div>} icon='filter_drama'>
 
         <table className='table'>
@@ -77,6 +82,11 @@ class JobAssociateFilterItems extends React.Component {
               <div className='spann'>Customer Mobile</div>
               <div className='spann'>Associate Name</div>
               <div className='spann'>Service Type</div>
+              <div className='spann'>Cleaning Status</div>
+              <div className='spann'>Customer Availability</div>
+              <div className='spann'>Customer Feedback</div>
+              <div className='spann'>Associate Feedback</div>
+
             </div>
             <Collapsible> 
 

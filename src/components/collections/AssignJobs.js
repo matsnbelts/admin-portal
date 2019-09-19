@@ -49,6 +49,7 @@ class AssignJobs extends React.Component {
             ...this.state,
             showCollapsible: false,
             triggerProgress: false,
+            fetchJobClicked: false,
             currentDate: new Date(e.target.value)
         }, function() {
         });
@@ -66,12 +67,12 @@ class AssignJobs extends React.Component {
 
         this.setState({
             ...this.state,
-            showCollapsible: true,
+            showCollapsible: false,
             triggerProgress: true,
             fetchJobClicked: false
         });
         this.props.history.push('/assign_jobs');
-        //window.location.reload(); 
+        M.toast({html: 'Jobs being assigned....', completeCallback: this.handleGetJobButton});
     }
     showCurrentDate = () => {
         let todayTime = this.state.currentDate;
@@ -143,11 +144,12 @@ class AssignJobs extends React.Component {
 
     render() {
         const showCollapsible = () => {
+            console.log(this.state.jobs);
             if(this.state.showCollapsible && this.state.jobs) {
                 return <div>
                             <JobAssociateFilterForm parentState={this.state} />
                         </div>
-            } else if(this.state.triggerProgress){
+            } if(this.state.triggerProgress){
                 return <div className="progress">
                     <div className="indeterminate"></div>
                 </div>
@@ -164,7 +166,7 @@ class AssignJobs extends React.Component {
                 {this.state.fetchJobClicked && 
                     <Button className="startJob" onClick={this.startJobScheduler}>Start Job Scheduler</Button>
                 }
-                {associateArray.size > 1 && 
+                {this.state.fetchJobClicked && associateArray.size > 1 && 
                     <Modal
                     header='Reassign Associate'
                     trigger={<Button className="reassignAssociate" >Reassign Associate</Button>}
@@ -195,9 +197,9 @@ class AssignJobs extends React.Component {
                         <div className='fetchJob'>
                         <TextInput label="Pick Date" id="jobdate" type="date" value={this.showCurrentDate()} onChange={(e) => this.handleDateChange(e)} />
                         {
-                            ( this.state.currentDate.getDate() <= new Date().getDate() &&
-                            this.state.currentDate.getMonth() <= new Date().getMonth() &&
-                            this.state.currentDate.getFullYear() <= new Date().getFullYear() ) && 
+                            // ( this.state.currentDate.getDate() <= new Date().getDate() &&
+                            // this.state.currentDate.getMonth() <= new Date().getMonth() &&
+                            // this.state.currentDate.getFullYear() <= new Date().getFullYear() ) && 
                             <Button className="col s2 #000000 black" onClick={this.handleGetJobButton}>Fetch Job History</Button>
                         }
                         </div>

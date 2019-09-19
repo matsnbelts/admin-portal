@@ -47,8 +47,12 @@
     margin-left: 55px;
   }
 
-  .jobContainer {
+  .handleUploadSheet {
     width: 90%
+  }
+
+  .jobContainer {
+    width: 100%
   }
 
   .jobFilterBox {

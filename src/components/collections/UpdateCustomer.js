@@ -32,7 +32,9 @@ class UpdateSingleCustomer extends React.Component {
         // Typical usage (don't forget to compare props):
         if (this.props.getCustomerData !== prevProps.getCustomerData) {
             const customerActionData = this.props.getCustomerData.action.customer
-            
+            if(!customerActionData.Cars) {
+                return;
+            }
             let Cars = []
             for(let [key, value] of Object.entries(customerActionData.Cars)) {
                 let car_map = {}
@@ -206,7 +208,7 @@ class UpdateSingleCustomer extends React.Component {
               <div className="divider"></div>
               <div className="section">
                 <Row>
-                    <TextInput style={(car_form.no === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Name" id="name" type="text" onChange={this.handleChange} value={this.state.name} />
+                    <TextInput style={(car_form.no === '') ? {borderColor: 'red'} : {}} required="" aria-required="true" className="input-field col s10" label="Car No." id={index + "id"} type="text" onChange={(e) => this.handleCarFieldChange(index, "id", e)} value={car_form.id} />
                     <TextInput style={(car_form.model === '') ? {bnorderColor: 'red'} : {}} disabled={!car_form.status} required="" className="validate input-field col s12" label="Model" id={index + "model"} type="text" value={car_form.model} onChange={(e) => this.handleCarFieldChange(index, "model", e)} />
                     <TextInput style={(car_form.startDate === '') ? {borderColor: 'red'} : {}} disabled={!car_form.status} label="Start Date" id={index + "startDate"} type="date" value={(car_form.startDate) ? new Date(new Date(car_form["startDate"]) - (new Date()).getTimezoneOffset() * 60000).toISOString().substr(0, 10) : ""} onChange={(e) => this.handleCarFieldChange(index, "startDate", e)} />
                </Row>
