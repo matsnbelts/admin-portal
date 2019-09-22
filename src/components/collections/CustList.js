@@ -5,39 +5,95 @@ import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import { Collapsible, CollapsibleItem, Button, TextInput } from 'react-materialize'
 import './CustomerList.css'
+import sendTopic from  './SendFCMTopic'
 import Input from '@material-ui/core/Input';
 import { TextField } from '@material-ui/core';
 
 class CustList extends React.Component {
     constructor(props) {
         super(props);
+        this.selectedCustomers = new Map();
+        this.filteredCustomers = {};
+        this.selectAll = false;
         this.state = {
             customers_state: props.customer,
             Cars: [],
-            searchCustomerName: 'all',
-            car_form_data: {}
+            searchCustomerName: 'all#',
+            car_form_data: {},
         }
     }
 
     componentDidMount() {
         console.log('Component Did Mount')
     }
+
     componentDidUpdate(prevProps) {
         //console.log('Component Did Update')
     }
+
     handleSearch = (e) => {
         e.preventDefault()
     }
+
 
     handleSearchChange = (e) => {
         e.preventDefault()
         this.setState({
             ...this.state,
-            [e.target.id]: e.target.value ? e.target.value.toLowerCase() : 'all'
+            [e.target.id]: e.target.value ? e.target.value.toLowerCase() : 'all#'
           }, () => {
             console.log(this.state.searchCustomerName) 
           })  
     }
+
+    handleSendInvoiceMessage = (e) => {
+        e.preventDefault()
+        console.log(this.selectedCustomers.keys())
+        this.selectedCustomers.forEach((value, key, map) => {
+            console.log('hiiiii: ' + key)
+            sendTopic(key) 
+        });
+        // for(let [key, value] of Object.entries(this.selectedCustomers)) {
+        //     console.log('hiiiii: ' + key)
+        //     sendTopic(key)
+        // }
+    }
+
+    selectChange = (e) => {
+        console.log(e.target.checked + " : id: " + e.target.id)
+        if(!e.target.checked) {
+            this.selectedCustomers.delete(e.target.id)
+        } else {
+            this.selectedCustomers.set(e.target.id, e.target.checked)
+        }
+        if(this.selectedCustomers.size > 0) {
+            this.refs.sendInvoiceMessage.disabled = false
+        } else {
+            this.refs.sendInvoiceMessage.disabled = true
+        } 
+        console.log(e.target.checked  + ' :: ' + this.filteredCustomers.length)
+    }
+
+    selectAllChange = (e) => {
+        console.log(e.target.checked)
+        this.selectAll = e.target.checked
+        this.filteredCustomers.map(g => {
+            this.refs['select' + g.id].checked = this.refs.selectAll.checked
+            if(this.refs['select' + g.id].checked) {
+                this.selectedCustomers.set('select' + g.id, this.refs['select' + g.id].checked)
+            } else {
+                this.selectedCustomers.delete('select' + g.id) 
+            }
+        })
+        if(this.selectedCustomers.size > 0) {
+            this.refs.sendInvoiceMessage.disabled = false
+
+        } else {
+            this.refs.sendInvoiceMessage.disabled = true
+        }
+        console.log(this.refs.selectAll.checked  + ' :: ' + this.filteredCustomers.length + " :: " + this.refs.sendInvoiceMessage.disabled)
+    }
+
     render() {
     const Cars = (props) => {
         if(props)
@@ -88,13 +144,13 @@ class CustList extends React.Component {
             }
         );
     }
+
     const Customers = () => {
         const { customer } = this.props;
         let customers;
         if (customer) {
-            let filteredCustomers;
-            if(this.state.searchCustomerName !== 'all') {
-                filteredCustomers = customer.filter(c => 
+            if(this.state.searchCustomerName !== 'all#') {
+                this.filteredCustomers = customer.filter(c => 
                     (c.name && c.name.toLowerCase().includes(this.state.searchCustomerName)) ||
                     (c.customerId && c.customerId.toLowerCase().includes(this.state.searchCustomerName)) ||
                     (c.apartmentNo && c.apartmentNo.toLowerCase().includes(this.state.searchCustomerName)) ||
@@ -102,12 +158,19 @@ class CustList extends React.Component {
                     (c.id && c.id.toLowerCase().includes(this.state.searchCustomerName))
                 );
             } else {
-                filteredCustomers = customer;
+                this.filteredCustomers = customer;
             }
-            customers = (filteredCustomers.map(g => {
+            customers = (this.filteredCustomers.map(g => {
                 return (
                     <CollapsibleItem key={g.name + " " + g.id} header={
                         <div>
+                            <label className='spann'>
+                                <input type="checkbox" id={'select-' + g.id} ref={'select' + g.id} onChange={(e) => this.selectChange(e)} className="filled-in" />
+                                <span></span>
+                            </label>
+      {/* <div className='spann'>
+            <input type="button" id="myBtn" onClick={this.startJobScheduler} value="..."></input>
+            </div> */}
                             <div className='spann'>{g.name}</div>
                             <div className='spann'>{g.customerId ? g.customerId: 'N/A'}</div>
                             <div className='spann'>{g.apartmentNo ? g.apartmentNo: 'N/A'}</div>
@@ -163,15 +226,24 @@ class CustList extends React.Component {
             <div>
                 <div className='spannHeaderContainer'>
                     <span className='showingJobsCustomer'>Showing ({customers.length})</span>
+                    <span>
+                        <form onSubmit={this.handleSendInvoiceMessage} className="col s12">
+                            <button id='sendInvoiceMessage' ref='sendInvoiceMessage' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Send Invoice Message</span> </button>
+                        </form>
+                    </span>
+
                     <div className='floatRight'>
                         <form onSubmit={this.handleSearch} className="col s12">
                             <input aria-invalid="false" id='searchCustomerName' style={getStylesSearch()} onChange={this.handleSearchChange} style={getStylesSearch()} className="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text"/>
-                            <button aria-label="" style={getSearchButtonStyle()} tabIndex="0"> <span>Search</span> </button>
                         </form>
                     </div>
 
                 </div>
                 <div className='spannHeaderContainer'>
+                    <label className='spannHeader'>
+                        <input type="checkbox" id='select-all' ref='selectAll' className="filled-in" onChange={(e) => this.selectAllChange(e)}/>
+                        <span></span>
+                    </label>
                     <div className='spannHeader'>Customer Name</div>
                     <div className='spannHeader'>Customer Id</div>
                     <div className='spannHeader'>ApartmentNo</div>
@@ -201,6 +273,13 @@ const mapStateToProps = (state) => {
         customer: state.firestoreDocs.ordered.customers
     }
 }
+
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//       addCustomer: (customer) => dispatch(addCustomer(customer))
+//     }
+//   }
+
 export default compose(
     connect(mapStateToProps, null),
     firestoreConnect([
