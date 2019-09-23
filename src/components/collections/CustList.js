@@ -6,8 +6,8 @@ import { compose } from 'redux'
 import { Collapsible, CollapsibleItem, Button, TextInput } from 'react-materialize'
 import './CustomerList.css'
 import sendTopic from  './SendFCMTopic'
-import Input from '@material-ui/core/Input';
-import { TextField } from '@material-ui/core';
+import { updateCustomerDueAction } from '../../store/actions/customerActions'
+
 
 class CustList extends React.Component {
     constructor(props) {
@@ -53,10 +53,6 @@ class CustList extends React.Component {
             console.log('hiiiii: ' + key)
             sendTopic(key) 
         });
-        // for(let [key, value] of Object.entries(this.selectedCustomers)) {
-        //     console.log('hiiiii: ' + key)
-        //     sendTopic(key)
-        // }
     }
 
     selectChange = (e) => {
@@ -68,8 +64,18 @@ class CustList extends React.Component {
         }
         if(this.selectedCustomers.size > 0) {
             this.refs.sendInvoiceMessage.disabled = false
+            this.refs.sendInvoiceMessage.style['cursor'] = 'pointer'
+            this.refs.markAsPaid.disabled = false
+            this.refs.markAsPaid.style['cursor'] = 'pointer'
+            this.refs.markAsDue.disabled = false
+            this.refs.markAsDue.style['cursor'] = 'pointer'
         } else {
             this.refs.sendInvoiceMessage.disabled = true
+            this.refs.sendInvoiceMessage.style['cursor'] = 'not-allowed'
+            this.refs.markAsPaid.disabled = false
+            this.refs.markAsPaid.style['cursor'] = 'pointer'
+            this.refs.markAsDue.disabled = false
+            this.refs.markAsDue.style['cursor'] = 'pointer'
         } 
         console.log(e.target.checked  + ' :: ' + this.filteredCustomers.length)
     }
@@ -87,11 +93,26 @@ class CustList extends React.Component {
         })
         if(this.selectedCustomers.size > 0) {
             this.refs.sendInvoiceMessage.disabled = false
-
+            this.refs.sendInvoiceMessage.style['cursor'] = 'pointer'
+            this.refs.markAsPaid.disabled = false
+            this.refs.markAsPaid.style['cursor'] = 'pointer'
+            this.refs.markAsDue.disabled = false
+            this.refs.markAsDue.style['cursor'] = 'pointer'
         } else {
             this.refs.sendInvoiceMessage.disabled = true
+            this.refs.sendInvoiceMessage.style['cursor'] = 'not-allowed'
+            this.refs.markAsPaid.disabled = false
+            this.refs.markAsPaid.style['cursor'] = 'pointer'
+            this.refs.markAsDue.disabled = false
+            this.refs.markAsDue.style['cursor'] = 'pointer'
         }
         console.log(this.refs.selectAll.checked  + ' :: ' + this.filteredCustomers.length + " :: " + this.refs.sendInvoiceMessage.disabled)
+    }
+
+    handleMark = (status, e) => {
+        e.preventDefault()
+        console.log(status)
+        this.props.updateCustomer(this.selectedCustomers, status)
     }
 
     render() {
@@ -114,6 +135,7 @@ class CustList extends React.Component {
             }
         );
     }
+
     const getSectionStyles = () => {
         return Object.assign(
             {},
@@ -129,6 +151,7 @@ class CustList extends React.Component {
                 'backgroundColor': 'black',
                 color: 'white',
                 'borderRadius': '5px',
+                cursor: 'not-allowed',
                 padding: '5px 10px'
             }
         );
@@ -228,10 +251,19 @@ class CustList extends React.Component {
                     <span className='showingJobsCustomer'>Showing ({customers.length})</span>
                     <span>
                         <form onSubmit={this.handleSendInvoiceMessage} className="col s12">
-                            <button id='sendInvoiceMessage' ref='sendInvoiceMessage' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Send Invoice Message</span> </button>
+                            <button id='sendInvoiceMessage' ref='sendInvoiceMessage' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Send Message</span> </button>
                         </form>
                     </span>
-
+                    <span>
+                        <form onSubmit={(e) => this.handleMark('due', e)} className="col s12">
+                            <button id='markAsDue' ref='markAsDue' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Mark as Due</span> </button>
+                        </form>
+                    </span>
+                    <span>
+                        <form onSubmit={(e) => this.handleMark('paid', e)} className="col s12">
+                            <button id='markAsPaid' ref='markAsPaid' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Mark as paid</span> </button>
+                        </form>
+                    </span>
                     <div className='floatRight'>
                         <form onSubmit={this.handleSearch} className="col s12">
                             <input aria-invalid="false" id='searchCustomerName' style={getStylesSearch()} onChange={this.handleSearchChange} style={getStylesSearch()} className="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text"/>
@@ -274,14 +306,14 @@ const mapStateToProps = (state) => {
     }
 }
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//       addCustomer: (customer) => dispatch(addCustomer(customer))
-//     }
-//   }
+const mapDispatchToProps = (dispatch) => {
+    return {
+      updateCustomer: (selectedCustomers, status) => dispatch(updateCustomerDueAction(selectedCustomers, status))
+    }
+  }
 
 export default compose(
-    connect(mapStateToProps, null),
+    connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect([
         { collection: 'customers' }
     ])

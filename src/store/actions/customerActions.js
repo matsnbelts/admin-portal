@@ -127,6 +127,22 @@ export const customerSheetUploadAction = (csvData) => {
     }
 }
 
+export const updateCustomerDueAction = (selectedCustomers, status) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        var batch = firestore.batch();
+        selectedCustomers.forEach((value, key, map) => {
+            let paid = (status == 'paid') ? true: false
+            var docRef = firestore.collection("customers").doc(key.substring(7));
+            batch.update(docRef, {"paid": paid});
+        });
+        // Commit the batch
+        batch.commit().then(function () {
+            console.log('Batch write successful!!!')
+        });
+    }
+}
+
 export const checkCustomerAction = (customerId) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
