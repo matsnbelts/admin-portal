@@ -1,5 +1,5 @@
 const initState = {
-    submitted: false
+    submitted: false,
   }
 
   const customerReducer = (state = initState, action) => {
@@ -14,6 +14,9 @@ const initState = {
         case 'ADD_CUSTOMER_ERROR':
             console.log('add customer error', action.err);
             return state;
+        case 'BATCH_UPDATE_SUCCESSFUL':
+                console.log('batch update reducer', action.batchUpdated);
+                return action
         case 'UPDATE_CUSTOMER':
             console.log('Updated customer', action.customer);
             return {

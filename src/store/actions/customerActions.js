@@ -133,12 +133,15 @@ export const updateCustomerDueAction = (selectedCustomers, status) => {
         var batch = firestore.batch();
         selectedCustomers.forEach((value, key, map) => {
             let paid = (status == 'paid') ? true: false
+            console.log(key + "::" + key.substring(7))
             var docRef = firestore.collection("customers").doc(key.substring(7));
             batch.update(docRef, {"paid": paid});
         });
         // Commit the batch
         batch.commit().then(function () {
             console.log('Batch write successful!!!')
+            const batchUpdated = true
+            dispatch({ type: 'BATCH_UPDATE_SUCCESSFUL', batchUpdated })
         });
     }
 }

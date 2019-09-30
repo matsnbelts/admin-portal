@@ -61,6 +61,12 @@
     margin-bottom: 5px;
   }
 
+  .custFilterBox {
+    display: flex;
+    justify-content: flex-start;
+    margin: 15px;
+  }
+
   .showingJobs {
     height: 40px;
     padding: 5px;

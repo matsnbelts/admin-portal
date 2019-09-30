@@ -1,7 +1,6 @@
-import { async } from "q";
 import request from 'request';
 
-const sendTopic = async (topic) => {
+const sendMsgTopic = async (topic) => {
     var post_data = {"notification": {"title": "Finish",
     "body": "cleaning"},
     "to": "/topics/" + topic};
@@ -23,4 +22,4 @@ const sendTopic = async (topic) => {
     });
 }
 
-export default sendTopic;
+export default sendMsgTopic;
