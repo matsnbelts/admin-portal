@@ -11,8 +11,8 @@ class JobAssociateFilterForm extends React.Component {
         this.state = {
             parentState: this.props.parentState,
             associate: '',
-            serviceType: '',
-            cleaningStatus: '',
+            serviceType: 'All',
+            cleaningStatus: 'All',
             multiple: false
         }
         // this.handleChange = this.handleChange.bind(this);
@@ -36,12 +36,12 @@ class JobAssociateFilterForm extends React.Component {
                 return job.associateName === this.state.associate;
               });
         }
-        if (this.state.cleaningStatus) {
+        if (this.state.cleaningStatus !== 'All') {
             filteredJobItems = filteredJobItems.filter((job) => {
                 return job.cleaningStatus === this.state.cleaningStatus;
               });
         }
-        if (this.state.serviceType) {
+        if (this.state.serviceType !== 'All') {
             filteredJobItems = filteredJobItems.filter((job) => {
                 return job.serviceType === this.state.serviceType;
               });
@@ -49,8 +49,8 @@ class JobAssociateFilterForm extends React.Component {
         let associateArray = this.props.parentState.jobs.map((job) => {return job.associateName});
         associateArray.unshift('');
         associateArray = new Set(associateArray);
-        let cleaningArray = new Set(['NotCleaned', 'Cleaned', '']);
-        let serviceTypeArray = new Set(['Exterior', 'Interior', '']);
+        let cleaningArray = new Set(['NotCleaned', 'Cleaned', 'All']);
+        let serviceTypeArray = new Set(['Exterior', 'Interior', 'All']);
 
         return (
             <div className="jobContainer">

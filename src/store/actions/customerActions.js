@@ -53,7 +53,8 @@ export const customerSheetUploadAction = (csvData) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
         for(let [id, customerData] of Object.entries(csvData)) {
-            if(!customerData.Mobile || !customerData.CarNo) {
+            let carN = customerData.CarNo.replace(/(\s|-)/g, "");
+            if(!customerData.Mobile || !carN) {
                 continue;
             }
             const customerId = '+91' + customerData.Mobile;
@@ -62,7 +63,7 @@ export const customerSheetUploadAction = (csvData) => {
                 let staffMobile = customerData.StaffMobile ? '+91' + customerData.StaffMobile: '';
                 if(!doc.exists) {
                     //////
-                    customer.active = (customerData.CustomerStatus === 'Y');
+                    customer.active = (customerData.active === 'Y');
                     customer.staffMobile = staffMobile;
                     customer.apartment = customerData.Apartment ? customerData.Apartment : '';
                     customer.apartmentNo = customerData.ApartmentNo ? customerData.ApartmentNo : '';
@@ -73,20 +74,20 @@ export const customerSheetUploadAction = (csvData) => {
 
                     let car = {};
                     let Cars = {};
-                        car.no = customerData.CarNo;
+                        car.no = carN;
                         car.model = customerData.Car ? customerData.Car : '';
                         car.status = (customerData.Active === 'Y');
                         car.startDate = (!customerData.StartDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(customerData.StartDate));
                         car.promoCode = customerData.Promocode ? customerData.Promocode : '';
                         car.pack = customerData.Pack ? customerData.Pack : '';
                         Cars[car.no] = car;
-                        //console.log(customerData)
+                        console.log(customerData)
                         customer.Cars = Cars;
                     //////
                 } else {
                     customer = doc.data();
                     //////
-                    customer.active = ((customerData.CustomerStatus !== 'Y' && customer.active) || (customerData.CustomerStatus === 'Y' && !customer.active)) ? !customer.active : customer.active;
+                    customer.active = ((customerData.active !== 'Y' && customer.active) || (customerData.active === 'Y' && !customer.active)) ? !customer.active : customer.active;
                     customer.staffMobile = (customer.staffMobile !== staffMobile) ? staffMobile : customer.staffMobile;
                     customer.apartment = (customerData.Apartment && customer.apartment !== customerData.Apartment) ? customerData.Apartment : customer.apartment;
                     customer.apartmentNo = (customerData.ApartmentNo && customer.apartmentNo !== customerData.ApartmentNo) ? customerData.ApartmentNo : customer.apartmentNo;
@@ -95,9 +96,9 @@ export const customerSheetUploadAction = (csvData) => {
                     //////
                     const cars_list = customer.Cars;
                     let Cars = {};
-                    if(!(customerData.CarNo in cars_list) || !cars_list[customerData.CarNo]) {
+                    if(!(carN in cars_list) || !cars_list[carN]) {
                         let car = {};
-                        car.no = customerData.CarNo;
+                        car.no = carN;
                         car.model = customerData.Car ? customerData.Car : '';
                         car.status = (customerData.Active === 'Y');
                         car.startDate = (!customerData.StartDate) ? null : new firebase.firestore.Timestamp.fromDate(new Date(customerData.StartDate));
@@ -107,10 +108,11 @@ export const customerSheetUploadAction = (csvData) => {
                         customer.Cars = Cars;
                     } else {
                         // look for potential fields to update
-                        let car = cars_list[customerData.CarNo];
-                        console.log(customerData.CarNo);
+                        let car = cars_list[carN];
+                        console.log(carN);
                         console.log(car);
                         car.model = (car.model !== customerData.Car) ? customerData.Car : car.model;
+                        car.model = (car.model) ? car.model : '';
                         car.status = car.status ? car.status : true;
                         car.status = ((customerData.Active !== 'Y' && car.status) || (customerData.Active === 'Y' && !car.status)) ? !car.status : car.status;
                         car.promoCode = (car.promoCode !== customerData.Promocode) ? customerData.Promocode : car.promoCode;

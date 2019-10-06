@@ -1,16 +1,35 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
+import firebase from 'firebase'
 import { Collapsible, CollapsibleItem } from 'react-materialize';
 import './CustomerList.css'
+import moment from 'moment';
 
 class JobAssociateFilterItems extends React.Component {
   
     render() {
+      const getImgUrl = (imgPath) => {
+        let storage = firebase.storage();
+        let storageRef = storage.ref();
+        // Create a reference to the file we want to download
+        let starsRef = storageRef.child(imgPath + '.jpg');
+        // Get the download URL
+        console.log(imgPath + '.jpg');
+        console.log(starsRef.getDownloadURL());
+        starsRef.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag to "download"
+          console.log(url);
+          return <span>{url}</span>
+        }).catch(function(error) {
+          return <a href={''} alt="N/A" height="42" width="42" />
+        });
+      }
       const dateToNavigate = this.props.dateData
       console.log(dateToNavigate.getMonth() + 1);
       console.log(dateToNavigate.getFullYear());
       console.log(dateToNavigate.getDate());
+      const today = moment().format('DD-MM-YYYY');
+
       const showJobs = this.props.data.length > 0 ? this.props.data.map((job, index) => (
         <CollapsibleItem key={job.carId} header={
           <div>
@@ -20,8 +39,7 @@ class JobAssociateFilterItems extends React.Component {
           <div className='spann'>{job.serviceType ? job.serviceType: 'N/A'}</div>
           <div className='spann'>{job.cleaningStatus ? job.cleaningStatus: 'N/A'}</div>
           <div className='spann'>{job.customerAvailability ? job.customerAvailability: 'N/A'}</div>
-          <div className='spann'>{job.customerFeedback ? job.customerFeedback: 'N/A'}</div>
-          <div className='spann'>{job.associateFeedback ? job.associateFeedback: 'N/A'}</div>
+          {/* <div className='spann'>{getImgUrl(today + '/' + job.carId)}</div> */}
 
         </div>} icon='filter_drama'>
 
@@ -63,6 +81,10 @@ class JobAssociateFilterItems extends React.Component {
                 <td className='custd'> Customer Feedback </td>
                 <td className='custd'> {job.customerFeedback} </td>
               </tr>
+              <tr className='custr'>
+                <td className='custd'> Cleaner Image </td>
+                <td className='custd'> {getImgUrl(today + '/' + job.carId)} </td>
+              </tr>
               </tbody>
             </table>
             {
@@ -84,8 +106,6 @@ class JobAssociateFilterItems extends React.Component {
               <div className='spann'>Service Type</div>
               <div className='spann'>Cleaning Status</div>
               <div className='spann'>Customer Availability</div>
-              <div className='spann'>Customer Feedback</div>
-              <div className='spann'>Associate Feedback</div>
 
             </div>
             <Collapsible> 

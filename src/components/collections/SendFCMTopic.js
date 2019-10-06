@@ -1,9 +1,6 @@
 import request from 'request';
 
-const sendMsgTopic = async (topic) => {
-    var post_data = {"notification": {"title": "Finish",
-    "body": "cleaning"},
-    "to": "/topics/" + topic};
+const sendMsgTopic = async (post_data) => {
     console.log(JSON.stringify(post_data));
     request({
         uri: 'https://fcm.googleapis.com/fcm/send',

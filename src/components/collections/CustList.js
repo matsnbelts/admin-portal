@@ -76,9 +76,20 @@ class CustList extends React.Component {
     sendMessage = (e) => {
         e.preventDefault()
         console.log(this.selectedCustomers.keys())
+        console.log(this.state.msgTitle);
+        console.log(this.state.msgBody);
+
         this.selectedCustomers.forEach((value, key, map) => {
-            console.log('hiiiii: ' + key)
-            sendMsgTopic('msg-' + key)
+            let topic = 'msg-' + key.substring(10)
+            console.log('hiiiii: ' + topic)
+            let postData = {
+                "notification": {
+                    "title": this.state.msgTitle,
+                    "body": this.state.msgBody
+                },
+                "to": "/topics/" + topic
+            }
+            sendMsgTopic(postData)
         });
     }
 
@@ -307,8 +318,8 @@ class CustList extends React.Component {
                     header='Send Message to Customers'
                     trigger={<button id='sendMessage' ref='sendMessage' aria-label="" style={getSearchButtonStyle()}> <span>Send Message</span> </button>}
                 >
-                    <TextInput required="" aria-required="true" className="input-field col s10" label="Title" id="msg-title" type="text" />
-                    <Textarea required="" aria-required="true" className="input-field col s10" label="Message" id="msg-body" type="text" />
+                    <TextInput required="" aria-required="true" className="input-field col s10" label="Title" id="msgTitle" ref="msgTitle" type="text" onChange={this.handleInvoiceFieldChange}/>
+                    <Textarea required="" aria-required="true" className="input-field col s10" label="Message" id="msgBody" ref="msgBody" type="text" onChange={this.handleInvoiceFieldChange}/>
 
                     <Button className="col s2 #000000 black" onClick={this.sendMessage}>Send</Button>
                 </Modal>
