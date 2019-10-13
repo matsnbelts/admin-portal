@@ -8,21 +8,19 @@ import moment from 'moment';
 class JobAssociateFilterItems extends React.Component {
   
     render() {
-      const getImgUrl = (imgPath) => {
+      const getImgUrl = async (imgPath) => {
         let storage = firebase.storage();
-        let storageRef = storage.ref();
-        // Create a reference to the file we want to download
-        let starsRef = storageRef.child(imgPath + '.jpg');
-        // Get the download URL
-        console.log(imgPath + '.jpg');
-        console.log(starsRef.getDownloadURL());
-        starsRef.getDownloadURL().then(function(url) {
-          // Insert url into an <img> tag to "download"
-          console.log(url);
-          return <span>{url}</span>
-        }).catch(function(error) {
+        var gsReference = storage.refFromURL('gs://matsnbelts.appspot.com/03-10-2019/TN11EE2221.jpg')
+        let iurl = '';
+        await gsReference.getDownloadURL().then((url) => {
+          console.log(<img src={url} alt="Smiley face" height="200" width="200" />)
+          iurl = <img src={url} alt="Smiley face" height="200" width="200" />
+          return iurl
+        }).catch(function (error) {
           return <a href={''} alt="N/A" height="42" width="42" />
         });
+        console.log(iurl)
+        return iurl
       }
       const dateToNavigate = this.props.dateData
       console.log(dateToNavigate.getMonth() + 1);
@@ -83,7 +81,7 @@ class JobAssociateFilterItems extends React.Component {
               </tr>
               <tr className='custr'>
                 <td className='custd'> Cleaner Image </td>
-                <td className='custd'> {getImgUrl(today + '/' + job.carId)} </td>
+                {/* <td className='custd'> {getImgUrl(today + '/' + job.carId)} </td> */}
               </tr>
               </tbody>
             </table>

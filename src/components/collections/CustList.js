@@ -85,7 +85,8 @@ class CustList extends React.Component {
             let postData = {
                 "notification": {
                     "title": this.state.msgTitle,
-                    "body": this.state.msgBody
+                    "body": this.state.msgBody,
+                    "image": 'https://firebasestorage.googleapis.com/v0/b/matsnbelts.appspot.com/o/11-10-2019%2FTN09IU8393.jpg?alt=media&token=9cf17318-091e-4f05-bd8b-9aeaf4a416ad'
                 },
                 "to": "/topics/" + topic
             }
