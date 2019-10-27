@@ -55,9 +55,9 @@ class UpdateSingleCustomer extends React.Component {
                 name: customerActionData.name,
                 mobile: customerActionData.mobile,
                 apartmentNo: customerActionData.apartmentNo,
-                apartment: customerActionData.apartment,
-                area: customerActionData.area,
-                email: customerActionData.email,
+                apartment: customerActionData.apartment ? customerActionData.apartment : '',
+                area: customerActionData.area ? customerActionData.area : '',
+                email: customerActionData.email ? customerActionData.email : '',
                 staffMobile: customerActionData.staffMobile,
                 active: customerActionData.active,
                 Cars: Cars

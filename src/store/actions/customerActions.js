@@ -63,7 +63,7 @@ export const customerSheetUploadAction = (csvData) => {
                 let staffMobile = customerData.StaffMobile ? '+91' + customerData.StaffMobile: '';
                 if(!doc.exists) {
                     //////
-                    customer.active = (customerData.active === 'Y');
+                    customer.active = (customerData.Active === 'Y');
                     customer.staffMobile = staffMobile;
                     customer.apartment = customerData.Apartment ? customerData.Apartment : '';
                     customer.apartmentNo = customerData.ApartmentNo ? customerData.ApartmentNo : '';
@@ -87,7 +87,7 @@ export const customerSheetUploadAction = (csvData) => {
                 } else {
                     customer = doc.data();
                     //////
-                    customer.active = ((customerData.active !== 'Y' && customer.active) || (customerData.active === 'Y' && !customer.active)) ? !customer.active : customer.active;
+                    customer.active = ((customerData.Active !== 'Y' && customer.active) || (customerData.Active === 'Y' && !customer.active)) ? !customer.active : customer.active;
                     customer.staffMobile = (customer.staffMobile !== staffMobile) ? staffMobile : customer.staffMobile;
                     customer.apartment = (customerData.Apartment && customer.apartment !== customerData.Apartment) ? customerData.Apartment : customer.apartment;
                     customer.apartmentNo = (customerData.ApartmentNo && customer.apartmentNo !== customerData.ApartmentNo) ? customerData.ApartmentNo : customer.apartmentNo;
@@ -144,6 +144,20 @@ export const updateCustomerDueAction = (selectedCustomers, status) => {
             console.log('Batch write successful!!!')
             const batchUpdated = true
             dispatch({ type: 'BATCH_UPDATE_SUCCESSFUL', batchUpdated })
+        });
+    }
+}
+
+export const deleteCustomerAction = (selectedCustomers) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        var batch = firestore.batch();
+        selectedCustomers.forEach((value, key, map) => {
+            firestore.collection("customers").doc(key.substring(7)).delete().then(function() {
+                console.log("Document successfully deleted!");
+            }).catch(function(error) {
+                console.error("Error removing document: ", error);
+            });
         });
     }
 }

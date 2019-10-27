@@ -32,11 +32,11 @@ class JobAssociateFilterItems extends React.Component {
         <CollapsibleItem key={job.carId} header={
           <div>
           <div className='spann'>{job.carId ? job.carId: 'N/A'}</div>
+          <div className='spann'>{job.customerName ? job.customerName: 'N/A'}</div>
           <div className='spann'>{job.customerId ? job.customerId: 'N/A'}</div>
           <div className='spann'>{job.associateName ? job.associateName: 'N/A'}</div>
           <div className='spann'>{job.serviceType ? job.serviceType: 'N/A'}</div>
           <div className='spann'>{job.cleaningStatus ? job.cleaningStatus: 'N/A'}</div>
-          <div className='spann'>{job.customerAvailability ? job.customerAvailability: 'N/A'}</div>
           {/* <div className='spann'>{getImgUrl(today + '/' + job.carId)}</div> */}
 
         </div>} icon='filter_drama'>
@@ -46,6 +46,10 @@ class JobAssociateFilterItems extends React.Component {
               <tr className='custr'>
                 <td className='custd'> Car Number </td>
                 <td className='custd'> {job.carId} </td>
+              </tr>
+              <tr className='custr'>
+                <td className='custd'> Customer Name </td>
+                <td className='custd'> {job.customerName} </td>
               </tr>
               <tr className='custr'>
                 <td className='custd'> Customer Mobile </td>
@@ -99,12 +103,11 @@ class JobAssociateFilterItems extends React.Component {
           <div className='collapsibleContainer'>
             <div className='itemsHeader'>
               <div className='spann'>Car Number</div>
+              <div className='spann'>Customer Name</div>
               <div className='spann'>Customer Mobile</div>
               <div className='spann'>Associate Name</div>
               <div className='spann'>Service Type</div>
               <div className='spann'>Cleaning Status</div>
-              <div className='spann'>Customer Availability</div>
-
             </div>
             <Collapsible> 
 

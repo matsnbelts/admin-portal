@@ -6,7 +6,7 @@ import { compose } from 'redux'
 import { Collapsible, CollapsibleItem, Button, Modal, TextInput, Textarea } from 'react-materialize'
 import './CustomerList.css'
 import sendMsgTopic from './SendFCMTopic'
-import { updateCustomerDueAction } from '../../store/actions/customerActions'
+import { updateCustomerDueAction, deleteCustomerAction } from '../../store/actions/customerActions'
 import FilterPaidOptions from './FilterPaidOptions'
 import FilterActiveOptions from './FilterActiveOptions'
 import * as FormData from 'form-data';
@@ -148,6 +148,8 @@ class CustList extends React.Component {
         this.refs.markAsPaid.style['cursor'] = 'not-allowed'
         this.refs.markAsDue.disabled = true
         this.refs.markAsDue.style['cursor'] = 'not-allowed'
+        this.refs.deleteCus.disabled = true
+        this.refs.deleteCus.style['cursor'] = 'not-allowed'
     }
 
     enableActionButtons = () => {
@@ -159,6 +161,8 @@ class CustList extends React.Component {
         this.refs.markAsPaid.style['cursor'] = 'pointer'
         this.refs.markAsDue.disabled = false
         this.refs.markAsDue.style['cursor'] = 'pointer'
+        this.refs.deleteCus.disabled = false
+        this.refs.deleteCus.style['cursor'] = 'pointer'
     }
 
     selectAllChange = (e) => {
@@ -188,6 +192,18 @@ class CustList extends React.Component {
     handleMark = (status, e) => {
         e.preventDefault()
         this.props.updateCustomer(this.selectedCustomers, status)
+        this.selectedCustomers = new Map();
+        this.filteredCustomers.map(g => {
+            this.refs['select-' + g.id].checked = false
+        })
+        this.refs.selectAll.checked = false
+        this.disableActionButtons()
+        // this.props.history.push('/view_customers')
+    }
+
+    handleDelete= (status, e) => {
+        e.preventDefault()
+        this.props.deleteCustomer(this.selectedCustomers, status)
         this.selectedCustomers = new Map();
         this.filteredCustomers.map(g => {
             this.refs['select-' + g.id].checked = false
@@ -434,6 +450,11 @@ class CustList extends React.Component {
                                 <button id='markAsPaid' ref='markAsPaid' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Mark as paid</span> </button>
                             </form>
                         </span>
+                        <span className='customerActionButtons'>
+                            <form onSubmit={(e) => this.handleDelete('delete', e)} className="col s12">
+                                <button id='deleteCus' ref='deleteCus' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Remove Customer</span> </button>
+                            </form>
+                        </span>
                         <div className='floatRight'>
                             <form onSubmit={this.handleSearch} className="col s12">
                                 <input aria-invalid="false" id='searchCustomerName' onChange={this.handleSearchChange} style={getStylesSearch()} className="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text" />
@@ -489,7 +510,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateCustomer: (selectedCustomers, status) => dispatch(updateCustomerDueAction(selectedCustomers, status))
+        updateCustomer: (selectedCustomers, status) => dispatch(updateCustomerDueAction(selectedCustomers, status)),
+        deleteCustomer: (selectedCustomers, status) => dispatch(deleteCustomerAction(selectedCustomers))
     }
 }
 

@@ -101,7 +101,7 @@ export const reassignJobAction = (currentDate, associateFrom, associateTo) => {
 
 export const scheduleJobAction = (currentDate) => {
     
-    function getCarMap(customerId, associateId, serviceType) {
+    function getCarMap(customerId, associateId, serviceType, customerName) {
         return {
           associateFeedback: "",
           associateId: associateId,
@@ -111,25 +111,28 @@ export const scheduleJobAction = (currentDate) => {
           customerId: customerId,
           serviceType: serviceType,
           supervisorFeedback: "",
-          supervisorId: ""
+          supervisorId: "",
+          customerName: customerName
         };
       }
 
-    function isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId) {
+    function isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId, customerName) {
         let interServiceDate = firestore.collection('interior_service_dates').doc(customerApartment).collection('Dates').doc(todate)
                                         .get();
         interServiceDate.then((interServiceDateDoc) => {
+            console.log(interServiceDateDoc.exists, customerApartment, todate)
             if(!interServiceDateDoc.exists) {
                 firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
                 .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
-                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, 'Exterior'), {merge: false});
+                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, 'Exterior', customerName), {merge: false});
                 return;
             }
             let interiorCarsList = interServiceDateDoc.data.Cars;
+            console.log(interiorCarsList)
             let serviceType = interiorCarsList.includes(carModel) ? 'Interior' : 'Exterior';
             firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
             .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
-            .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, serviceType), {merge: false});
+            .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, serviceType, customerName), {merge: false});
         })
     }
 
@@ -148,6 +151,7 @@ export const scheduleJobAction = (currentDate) => {
                         let customerApartment = customerInfo.apartment;
                         let carsMap = customerInfo.Cars;
                         let associateId = customerInfo.staffMobile;
+                        let customerName = customerInfo.name;
                         for(let [carModel, value] of Object.entries(carsMap)) {
                             if(!value.status) {
                               continue;
@@ -158,14 +162,14 @@ export const scheduleJobAction = (currentDate) => {
                                 .get();
                             customerUnavailabilityDate.then((customerUnavailabilityDateDoc) => {
                                 if(!customerUnavailabilityDateDoc.exists) {
-                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId);
+                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId, customerName);
                                     return;
                                 }
                                 let customerUnavailabilityCarsList = customerUnavailabilityDateDoc.data.Cars;
                                 if(!customerUnavailabilityCarsList.includes(carModel)) {
                                    // TODO: check if today customer has scheduled for interior cleaning from
                                     //    interior_service_availability
-                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId);
+                                    isInteriorAvailed(todate, carModel, firestore, customerApartment, customerId, associateId, customerName);
                                 }
                             })
                           }
