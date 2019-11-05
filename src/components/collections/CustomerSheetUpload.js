@@ -2,7 +2,8 @@ import React from 'react';
 import Papa from 'papaparse';
 import { connect } from 'react-redux'
 import { customerSheetUploadAction } from '../../store/actions/customerActions'
-import { Button } from '@material-ui/core';
+import M from "materialize-css";
+
 import './CustomerList.css'
 
 class CustomerSheetUpload extends React.Component {
@@ -10,6 +11,7 @@ class CustomerSheetUpload extends React.Component {
       super();
       this.state = {
         csvfile: undefined,
+        updated: undefined
       };
       this.updateData = this.updateData.bind(this);
     }
@@ -34,7 +36,9 @@ class CustomerSheetUpload extends React.Component {
         ...this.state,
       });
       this.props.customerSheetUpload(data);
-      this.props.history.push('/view_customers');
+      M.toast({html: 'Uploaded successfully... Your db is being updated...'});
+
+      //this.props.history.push('/view_customers');
     }
   
     render() {
@@ -106,7 +110,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
     return {
-        customer_exists: state.customer_exists
+      batchUpload: state.batchUpload
     }
 }
 

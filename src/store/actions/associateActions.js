@@ -6,7 +6,7 @@ export const addAssociate = (associate) => {
 
         // make async call to database
         const firestore = getFirestore();
-        firestore.collection('associates').doc(associate.mobile).set({
+        firestore.collection('associates').doc('+91' + associate.mobile).set({
             ...associate,
             totalCustomersRated: 0,
             totalScores: 0,

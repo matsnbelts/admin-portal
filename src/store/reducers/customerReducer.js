@@ -17,6 +17,11 @@ const initState = {
         case 'BATCH_UPDATE_SUCCESSFUL':
                 console.log('batch update reducer', action.batchUpdated);
                 return action
+        case 'BATCH_UPLOAD_SUCCESSFUL':
+            console.log('batch upload reducer', action.batchUpload);
+            return {
+                ...state.batchUpload = action.batchUpload,
+            }
         case 'UPDATE_CUSTOMER':
             console.log('Updated customer', action.customer);
             return {

@@ -23,7 +23,7 @@ export const addCustomer = (c) => {
             Cars[car.no] = car;
         });
         customer.Cars = Cars;
-        firestore.collection('customers').doc(customer.mobile).set({
+        firestore.collection('customers').doc('+91' + customer.mobile).set({
             ...customer
         }).then(() => {
             dispatch({ type: 'ADD_CUSTOMER', customer });
@@ -53,10 +53,10 @@ export const customerSheetUploadAction = (csvData) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
         for(let [id, customerData] of Object.entries(csvData)) {
-            let carN = customerData.CarNo.replace(/(\s|-)/g, "");
-            if(!customerData.Mobile || !carN) {
+            if(!customerData.Mobile || !customerData.CarNo) {
                 continue;
             }
+            let carN = customerData.CarNo.replace(/(\s|-)/g, "");
             const customerId = '+91' + customerData.Mobile;
             firestore.collection('customers').doc(customerId).get().then((doc) => {
                 let customer = {};
@@ -126,6 +126,8 @@ export const customerSheetUploadAction = (csvData) => {
                 }, {merge: true});
             })
         }
+        const batchUpload = true
+        dispatch({ type: 'BATCH_UPLOAD_SUCCESSFUL', batchUpload })
     }
 }
 

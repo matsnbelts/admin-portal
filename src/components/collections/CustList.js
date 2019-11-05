@@ -102,6 +102,7 @@ class CustList extends React.Component {
         form.append('due-date', this.state.dueDate);
         form.append('output', this.state.invoiceOutput);
         form.append('invoice-month', this.state.invMonth);
+        form.append('send-mail', false);
         console.log('hiiiii: ' + this.state.invoiceOutput + " " + this.state.dueDate
         + " : " + this.state.invoiceDate + " : " + this.state.csvfile)
 
