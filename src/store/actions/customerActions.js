@@ -6,13 +6,13 @@ export const addCustomer = (c) => {
         const firestore = getFirestore();
         let customer = {};
         customer.name = c.name;
-        customer.mobile = c.mobile;
+        customer.mobile = '+91' + c.mobile;
         customer.apartment = c.apartment;
         customer.apartmentNo = c.apartmentNo;
         customer.area = c.area;
         customer.apartmentNo = c.apartmentNo;
         customer.active = true;
-        customer.staffMobile = c.staffMobile;
+        customer.staffMobile = '+91' + c.staffMobile;
         customer.email = c.email;
         let cars_list = c.Cars;
         let Cars = {};
@@ -23,7 +23,7 @@ export const addCustomer = (c) => {
             Cars[car.no] = car;
         });
         customer.Cars = Cars;
-        firestore.collection('customers').doc('+91' + customer.mobile).set({
+        firestore.collection('customers').doc(customer.mobile).set({
             ...customer
         }).then(() => {
             dispatch({ type: 'ADD_CUSTOMER', customer });
@@ -89,6 +89,7 @@ export const customerSheetUploadAction = (csvData) => {
                     //////
                     customer.active = ((customerData.Active !== 'Y' && customer.active) || (customerData.Active === 'Y' && !customer.active)) ? !customer.active : customer.active;
                     customer.staffMobile = (customer.staffMobile !== staffMobile) ? staffMobile : customer.staffMobile;
+                    customer.name = (customerData.ContactName && customer.name !== customerData.ContactName) ? customerData.ContactName : customer.name;
                     customer.apartment = (customerData.Apartment && customer.apartment !== customerData.Apartment) ? customerData.Apartment : customer.apartment;
                     customer.apartmentNo = (customerData.ApartmentNo && customer.apartmentNo !== customerData.ApartmentNo) ? customerData.ApartmentNo : customer.apartmentNo;
                     customer.email = (customerData.EmailAddress && customer.email !== customerData.EmailAddress) ? customerData.EmailAddress : customer.email;
@@ -111,10 +112,11 @@ export const customerSheetUploadAction = (csvData) => {
                         let car = cars_list[carN];
                         console.log(carN);
                         console.log(car);
-                        car.model = (car.model !== customerData.Car) ? customerData.Car : car.model;
+                        car.model = (customerData.Car && car.model !== customerData.Car) ? customerData.Car : car.model;
                         car.model = (car.model) ? car.model : '';
                         car.status = car.status ? car.status : true;
                         car.status = ((customerData.Active !== 'Y' && car.status) || (customerData.Active === 'Y' && !car.status)) ? !car.status : car.status;
+                        car.startDate = (customerData.StartDate && car.startDate !== customerData.StartDate) ? customerData.StartDate : car.startDate;
                         car.promoCode = (car.promoCode !== customerData.Promocode) ? customerData.Promocode : car.promoCode;
                         Cars[car.no] = car;
                         customer.Cars = Cars;
@@ -167,7 +169,7 @@ export const deleteCustomerAction = (selectedCustomers) => {
 export const checkCustomerAction = (customerId) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
-        firestore.collection('customers').doc(customerId).get().then((doc) => {
+        firestore.collection('customers').doc('+91' + customerId).get().then((doc) => {
             const customer_exists = doc.exists
             dispatch({ type: 'CUSTOMER_EXISTS', customer_exists })
         })

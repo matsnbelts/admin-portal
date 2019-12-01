@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Container, Button, TextInput} from 'react-materialize';
 import AddCustomer from './AddCustomer';
+import M from "materialize-css";
 import { checkCustomerAction } from '../../store/actions/customerActions'
 
 class CreateCustomer extends React.Component {
@@ -9,7 +10,7 @@ class CreateCustomer extends React.Component {
         super();
         this.state = {
             mobile: '',
-            customer_exists: false,
+            customer_exists: true,
             verified: false
         }
         // this.handleChange = this.handleChange.bind(this);
@@ -51,7 +52,12 @@ class CreateCustomer extends React.Component {
             <div>
                 <AddCustomer mobilePropagated={this.state.mobile} />
             </div>
-            );
+            ) ||
+            (this.state.customer_exists && this.state.verified) && (
+                <div>
+                    <div>Customer exists already</div>
+                </div>
+            )
         return (
             <div>
                 <div className='center'>
@@ -78,8 +84,17 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 const mapStateToProps = (state) => {
-    return {
-        customer_exists: state.customer_exists
+    if(state.customer.action) {
+        console.log(state.customer.action.customer_exists)
+        return {
+            customer_exists: state.customer.action.customer_exists
+        }
+    } else {
+        return {
+            customer_exists: true
+        }
     }
+
+    
 }
 export default connect(mapStateToProps, mapDispatchToProps)(CreateCustomer)

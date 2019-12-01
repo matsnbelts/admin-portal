@@ -44,7 +44,9 @@ const initState = {
         case 'CUSTOMER_EXISTS':
             console.log('CUSTOMER_EXISTS', action.customer_exists);
             return {
-                ...state.customer_exists = action.customer_exists,
+                ...state,
+                ...state = action.customer_exists,
+                action
             }
         default:
             return state;

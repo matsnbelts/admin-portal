@@ -60,14 +60,14 @@ width: 40%;
     padding: 30px
   }
   .spann {
-    /* padding: 15px 15px; */
+    padding: 15px 10px;
     font-family: Lato;
     line-height: 24px;
     font-size: 13px;
     text-align: left;
     display: block;
     float: left;
-    width: 100px;
+    width: 150px;
     cursor: pointer;
   }
   .custd {
