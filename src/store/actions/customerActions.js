@@ -133,6 +133,20 @@ export const customerSheetUploadAction = (csvData) => {
     }
 }
 
+export const getCleaners = () => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        let associateMap = new Map()
+        firestore.collection('associates').get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                const associate = doc.data()
+                associateMap.set(associate.mobile.substring(3), associate.name)
+            });
+            dispatch({ type: 'CLEANERS_LIST', associateMap })
+        });
+    }
+}
+
 export const updateCustomerDueAction = (selectedCustomers, status) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
@@ -166,6 +180,25 @@ export const deleteCustomerAction = (selectedCustomers) => {
     }
 }
 
+export const reassignCleanerCustomerAction = (selectedCustomers, newStaffMobile) => {
+    return (dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore()
+        var batch = firestore.batch();
+        selectedCustomers.forEach((value, key, map) => {
+            let staffMobile = newStaffMobile
+            console.log(key + "::" + key.substring(7))
+            var docRef = firestore.collection("customers").doc(key.substring(7));
+            batch.update(docRef, {"staffMobile": "+91" + staffMobile});
+        });
+        // Commit the batch
+        batch.commit().then(function () {
+            console.log('Batch write successful!!!')
+            const batchUpdated = true
+            dispatch({ type: 'BATCH_UPDATE_SUCCESSFUL', batchUpdated })
+        });
+    }
+}
+
 export const checkCustomerAction = (customerId) => {
     return (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore()
@@ -186,7 +219,7 @@ export const updateCustomerAction = (c, customerId) => {
         customer.area = c.area;
         customer.apartmentNo = c.apartmentNo;
         customer.active = c.active;
-        customer.staffMobile = c.staffMobile;
+        customer.staffMobile = "+91" + c.staffMobile;
         customer.email = c.email;
         let cars_list = c.Cars;
         let Cars = {};

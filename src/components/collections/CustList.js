@@ -6,9 +6,11 @@ import { compose } from 'redux'
 import { Collapsible, CollapsibleItem, Button, Modal, TextInput, Textarea } from 'react-materialize'
 import './CustomerList.css'
 import sendMsgTopic from './SendFCMTopic'
-import { updateCustomerDueAction, deleteCustomerAction } from '../../store/actions/customerActions'
+import { updateCustomerDueAction, deleteCustomerAction, reassignCleanerCustomerAction, getCleaners } from '../../store/actions/customerActions'
 import FilterPaidOptions from './FilterPaidOptions'
 import FilterActiveOptions from './FilterActiveOptions'
+import FilterApartmentOptions from './FilterApartmentOptions'
+import FilterCleanerOptions from './FilterCleanerOptions'
 import * as FormData from 'form-data';
 import M from "materialize-css";
 
@@ -18,6 +20,7 @@ class CustList extends React.Component {
         this.selectedCustomers = new Map();
         this.filteredCustomers = {};
         this.selectAll = false;
+        this.props.getCleaners();
         this.state = {
             customers_state: props.customer,
             Cars: [],
@@ -25,12 +28,16 @@ class CustList extends React.Component {
             car_form_data: {},
             paidStatus: 'All',
             activeStatus: 'All',
+            apartmentFilter: 'All',
+            cleanerFilter: 'All',
             generateInvoiceDone: false,
             batchUpdated: false,
+            associateMap: undefined,
             csvfile: undefined,
             invoiceDate: undefined,
             dueDate: undefined,
-            invoiceDate: undefined
+            invoiceDate: undefined,
+            newStaffMobile: undefined
         }
     }
 
@@ -39,7 +46,7 @@ class CustList extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log('Component Did Update')
+        console.log('Component Did Update ')
         if(this.state.generateInvoiceDone) {
             this.setState({
                 ...this.state,
@@ -47,8 +54,6 @@ class CustList extends React.Component {
             })
             this.props.history.push('/')
         }
-        // if(this.props )
-        //     console.log('Component Did Update' + this.props.batchUpdated + " :: " + this.prevProps.batchUpdated)
 
     }
 
@@ -151,6 +156,8 @@ class CustList extends React.Component {
         this.refs.markAsDue.style['cursor'] = 'not-allowed'
         this.refs.deleteCus.disabled = true
         this.refs.deleteCus.style['cursor'] = 'not-allowed'
+        this.refs.reassignCleaner.disabled = true
+        this.refs.reassignCleaner.style['cursor'] = 'not-allowed'
     }
 
     enableActionButtons = () => {
@@ -164,6 +171,8 @@ class CustList extends React.Component {
         this.refs.markAsDue.style['cursor'] = 'pointer'
         this.refs.deleteCus.disabled = false
         this.refs.deleteCus.style['cursor'] = 'pointer'
+        this.refs.reassignCleaner.disabled = false
+        this.refs.reassignCleaner.style['cursor'] = 'pointer'
     }
 
     selectAllChange = (e) => {
@@ -214,12 +223,32 @@ class CustList extends React.Component {
         // this.props.history.push('/view_customers')
     }
 
+    handleAssignCleaner= (e) => {
+        e.preventDefault()
+        this.props.reassignCleaner(this.selectedCustomers, this.state.newStaffMobile)
+        this.selectedCustomers = new Map();
+        this.filteredCustomers.map(g => {
+            this.refs['select-' + g.id].checked = false
+        })
+        this.refs.selectAll.checked = false
+        this.disableActionButtons()
+        // this.props.history.push('/view_customers')
+    }
+
     filterPaidItems = (val) => {
         this.setState({ paidStatus: val });
     }
 
     filterActiveItems = (val) => {
         this.setState({ activeStatus: val });
+    }
+
+    filterApartmentItems = (val) => {
+        this.setState({ apartmentFilter: val });
+    }
+
+    filterCleanerItems = (val) => {
+        this.setState({ cleanerFilter: val });
     }
 
     handleInvoiceFieldChange = (e) => {
@@ -344,10 +373,25 @@ class CustList extends React.Component {
             </span>
         }
 
+        const reassignCleanerElement = () => {
+            return <span className='customerActionButtons'>
+                <Modal
+                    header='Reassign Cleaner'
+                    trigger={<button id='reassignCleaner' ref='reassignCleaner' aria-label="" style={getSearchButtonStyle()}> <span>Reassign Cleaner</span> </button>}
+                >
+                    <TextInput required="" aria-required="true" className="input-field col s10" label="10 digit Mobile number(without country code)" id="newStaffMobile" ref="newStaffMobile" type="text" onChange={this.handleInvoiceFieldChange}/>
+                    <Button className="col s2 #000000 black" onClick={this.handleAssignCleaner}>Reassign</Button>
+                </Modal>
+            </span>
+        }
+
         const Customers = () => {
             const { customer } = this.props;
             let paidArray = new Set(['Not Paid', 'Paid', 'All']);
             let activeArray = new Set(['Not Active', 'Active', 'All']);
+            let apartmentArray = new Set(['All'])
+            let cleanerMap = new Map()
+            cleanerMap.set('All', 'All')
             let customers;
             if (customer) {
                 if (this.state.searchCustomerName !== 'all#') {
@@ -371,7 +415,33 @@ class CustList extends React.Component {
                         return c.active === (this.state.activeStatus === 'Active');
                     });
                 }
+                if (this.state.apartmentFilter !== 'All') {
+                    this.filteredCustomers = this.filteredCustomers.filter((c) => {
+                        return c.apartment === this.state.apartmentFilter;
+                    });
+                }
+                if (this.state.cleanerFilter !== 'All') {
+                    let tmp = this.filteredCustomers.filter((c) => {
+                        return c.staffMobile === "+91" + this.state.cleanerFilter;
+                    });
+                    if(tmp.length > 0) {
+                        this.filteredCustomers = tmp
+                    }
+                }
                 customers = (this.filteredCustomers.map(g => {
+                    apartmentArray.add(g.apartment)
+                    if(this.props.getCleanersMap) {
+                        cleanerMap.set(g.staffMobile.substring(3),
+                            this.props.getCleanersMap.get(g.staffMobile.substring(3)) )
+                // console.log(g.staffMobile.substring(3),
+                // this.props.getCleanersMap.get(g.staffMobile.substring(3)))
+                //         const itr = this.props.getCleanersMap.keys()
+                //         while (itr.next().value) {
+                //            console.log(itr.next().value)
+                //         }
+                //         cleanerMap = this.props.getCleanersMap
+                    }
+                    
                     return (
                         <CollapsibleItem key={g.name + " " + g.id} header={
                             <div>
@@ -456,6 +526,7 @@ class CustList extends React.Component {
                                 <button id='deleteCus' ref='deleteCus' aria-label="" style={getSearchButtonStyle()} tabIndex="0" disabled> <span>Remove Customer</span> </button>
                             </form>
                         </span>
+                        {reassignCleanerElement()}
                         <div className='floatRight'>
                             <form onSubmit={this.handleSearch} className="col s12">
                                 <input aria-invalid="false" id='searchCustomerName' onChange={this.handleSearchChange} style={getStylesSearch()} className="MuiInputBase-input-28 MuiInput-input-13" placeholder="Search" type="text" />
@@ -471,6 +542,16 @@ class CustList extends React.Component {
                             active={this.state.activeStatus}
                             activeOptions={activeArray}
                             changeOption={this.filterActiveItems} />
+                        <FilterApartmentOptions
+                            apartment={this.state.apartmentFilter}
+                            apartmentOptions={apartmentArray}
+                            changeOption={this.filterApartmentItems} />
+                        <FilterCleanerOptions
+                            cleaner={this.state.cleanerFilter}
+                            cleanerOptions={cleanerMap}
+                            changeOption={this.filterCleanerItems} />
+                            
+                            
                     </div>
                     <div className='spannHeaderContainer'>
                         <label className='spannHeader'>
@@ -503,7 +584,9 @@ class CustList extends React.Component {
     }
 }
 const mapStateToProps = (state) => {
+
     return {
+        getCleanersMap: state.customer.associateMap,
         customer: state.firestoreDocs.ordered.customers,
         batchUpdated: (state.customer.batchUpdated) ? state.customer.batchUpdated : false
     }
@@ -511,8 +594,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        getCleaners: () => dispatch(getCleaners()),
         updateCustomer: (selectedCustomers, status) => dispatch(updateCustomerDueAction(selectedCustomers, status)),
-        deleteCustomer: (selectedCustomers, status) => dispatch(deleteCustomerAction(selectedCustomers))
+        deleteCustomer: (selectedCustomers, status) => dispatch(deleteCustomerAction(selectedCustomers)),
+        reassignCleaner: (selectedCustomers, newStaffMobile) => dispatch(reassignCleanerCustomerAction(selectedCustomers, newStaffMobile))
     }
 }
 

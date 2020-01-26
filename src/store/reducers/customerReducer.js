@@ -48,6 +48,13 @@ const initState = {
                 ...state = action.customer_exists,
                 action
             }
+        case 'CLEANERS_LIST':
+            console.log('Get cleaners', action.associateMap);
+            return {
+                ...state,
+                ...state.associateMap = action.associateMap,
+                action
+            }
         default:
             return state;
     }
