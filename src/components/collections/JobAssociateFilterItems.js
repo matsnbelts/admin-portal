@@ -53,9 +53,10 @@ class JobAssociateFilterItems extends React.Component {
           <div className='spann'>{job.associateName ? job.associateName : 'N/A'}</div>
           <div className='spann'>{job.serviceType ? job.serviceType : 'N/A'}</div>
           <div className='spann'>{job.cleaningStatus ? job.cleaningStatus : 'N/A'}</div>
+          
           <div className='spann'>{this.state.imgURLs.get(job.carId)}</div>
 
-        </div>} icon='filter_drama'>
+        </div>}>
 
         <table className='table'>
           <tbody className='custbody'>
@@ -70,6 +71,10 @@ class JobAssociateFilterItems extends React.Component {
             <tr className='custr'>
               <td className='custd'> Customer Mobile </td>
               <td className='custd'> {job.customerId} </td>
+            </tr>
+            <tr className='custr'>
+              <td className='custd'> Customer Apartment </td>
+              <td className='custd'> {job.customerApartment} </td>
             </tr>
             <tr className='custr'>
               <td className='custd'> Associate Mobile </td>

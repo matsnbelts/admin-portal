@@ -12,7 +12,7 @@ const Associates = (props) => {
   if (associate) {
     associates = (associate.map(g => {
       return (
-        <CollapsibleItem header={g.name + " " + g.id} icon='filter_drama'>
+        <CollapsibleItem header={g.name + " " + g.id}>
           <div><span>Associate Name: </span><span>{g.name}</span></div>
           <div><span>Associate Mobile: </span><span>{g.id}</span></div>
           <div><span>Associate Status: </span><span>{g.active ? "Active" : "Not Active"}</span></div>

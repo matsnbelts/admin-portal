@@ -1,5 +1,6 @@
 import React from 'react'
 import JobAssociateFilterOptions from './JobAssociateFilterOptions'
+import JobApartmentFilterOptions from './JobApartmentFilterOptions'
 import JobCleaningFilterOptions from './JobCleaningFilterOptions'
 import JobServiceTypeFilterOptions from './JobServiceTypeFilterOptions'
 
@@ -11,6 +12,7 @@ class JobAssociateFilterForm extends React.Component {
         this.state = {
             parentState: this.props.parentState,
             associate: '',
+            apartment: '',
             serviceType: 'All',
             cleaningStatus: 'All',
             multiple: false
@@ -23,6 +25,9 @@ class JobAssociateFilterForm extends React.Component {
     filterItems =(val) => {
         this.setState({associate: val});
     }
+    filterApartmentItems =(val) => {
+        this.setState({apartment: val});
+    }
     filterCleaningItems =(val) => {
         this.setState({cleaningStatus: val});
     }
@@ -34,6 +39,11 @@ class JobAssociateFilterForm extends React.Component {
         if (this.state.associate) {
             filteredJobItems = filteredJobItems.filter((job) => {
                 return job.associateName === this.state.associate;
+              });
+        }
+        if (this.state.apartment) {
+            filteredJobItems = filteredJobItems.filter((job) => {
+                return job.customerApartment === this.state.apartment;
               });
         }
         if (this.state.cleaningStatus !== 'All') {
@@ -49,6 +59,11 @@ class JobAssociateFilterForm extends React.Component {
         let associateArray = this.props.parentState.jobs.map((job) => {return job.associateName});
         associateArray.unshift('');
         associateArray = new Set(associateArray);
+
+        let apartmentArray = this.props.parentState.jobs.map((job) => {return job.customerApartment});
+        apartmentArray.unshift('');
+        apartmentArray = new Set(apartmentArray);
+
         let cleaningArray = new Set(['NotCleaned', 'Cleaned', 'All']);
         let serviceTypeArray = new Set(['Exterior', 'Interior', 'All']);
 
@@ -60,6 +75,10 @@ class JobAssociateFilterForm extends React.Component {
                     associate={this.state.associate}
                     associateOptions={associateArray}
                     changeOption={this.filterItems} />
+                <JobApartmentFilterOptions 
+                    apartment={this.state.apartment}
+                    apartmentOptions={apartmentArray}
+                    changeOption={this.filterApartmentItems} />
                 <JobCleaningFilterOptions 
                     cleaning={this.state.cleaningStatus}
                     cleaningOptions={cleaningArray}

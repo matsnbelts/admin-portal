@@ -21,9 +21,11 @@ class CustList extends React.Component {
         this.filteredCustomers = {};
         this.selectAll = false;
         this.props.getCleaners();
+        this.associateTotalMap = new Map()
         this.state = {
             customers_state: props.customer,
             Cars: [],
+            associate_change: '',
             searchCustomerName: 'all#',
             car_form_data: {},
             paidStatus: 'All',
@@ -37,6 +39,7 @@ class CustList extends React.Component {
             invoiceDate: undefined,
             dueDate: undefined,
             invoiceDate: undefined,
+            invMonth: 'January',
             newStaffMobile: undefined
         }
     }
@@ -74,7 +77,6 @@ class CustList extends React.Component {
             ...this.state,
             [e.target.id]: e.target.value ? e.target.value.toLowerCase() : 'all#'
         }, () => {
-            console.log(this.state.searchCustomerName)
         })
     }
 
@@ -86,7 +88,7 @@ class CustList extends React.Component {
 
         this.selectedCustomers.forEach((value, key, map) => {
             let topic = 'msg-' + key.substring(10)
-            console.log('hiiiii: ' + topic)
+            console.log('Topic: ' + topic)
             let postData = {
                 "notification": {
                     "title": this.state.msgTitle,
@@ -108,8 +110,6 @@ class CustList extends React.Component {
         form.append('output', this.state.invoiceOutput);
         form.append('invoice-month', this.state.invMonth);
         form.append('send-mail', false);
-        console.log('hiiiii: ' + this.state.invoiceOutput + " " + this.state.dueDate
-        + " : " + this.state.invoiceDate + " : " + this.state.csvfile)
 
         const response = await fetch('http://localhost:8080/admin/generate/', {
             method: 'POST',
@@ -132,7 +132,6 @@ class CustList extends React.Component {
     }
 
     selectChange = (e) => {
-        console.log(e.target.checked + " : id: " + e.target.id)
         if (!e.target.checked) {
             this.selectedCustomers.delete(e.target.id)
         } else {
@@ -175,8 +174,20 @@ class CustList extends React.Component {
         this.refs.reassignCleaner.style['cursor'] = 'pointer'
     }
 
+    createOptions = (options) => {
+        let opts = []
+        options.forEach((key,value, set) => {
+            if(typeof key == 'string') {
+                let val = value.substring(3)
+                opts.push(<option key={val} value={val}>{key}</option>);
+
+            }
+        }
+        );
+        return opts
+    }
+
     selectAllChange = (e) => {
-        console.log(e.target.checked)
         this.selectAll = e.target.checked
         this.filteredCustomers.map(g => {
             this.refs['select-' + g.id].checked = this.refs.selectAll.checked
@@ -198,6 +209,15 @@ class CustList extends React.Component {
             csvfile: event.target.files[0]
         });
     };
+
+
+    handleAssociateChange = (e) => {
+        e.preventDefault();
+        this.setState({
+            ...this.state,
+            associate_change: e.target.value
+        })
+    }
 
     handleMark = (status, e) => {
         e.preventDefault()
@@ -225,7 +245,7 @@ class CustList extends React.Component {
 
     handleAssignCleaner= (e) => {
         e.preventDefault()
-        this.props.reassignCleaner(this.selectedCustomers, this.state.newStaffMobile)
+        this.props.reassignCleaner(this.selectedCustomers, this.state.associate_change)
         this.selectedCustomers = new Map();
         this.filteredCustomers.map(g => {
             this.refs['select-' + g.id].checked = false
@@ -252,7 +272,6 @@ class CustList extends React.Component {
     }
 
     handleInvoiceFieldChange = (e) => {
-        console.log(e.target.id + " : " + e.target.value)
         this.setState({
             [e.target.id]: e.target.value
         })
@@ -379,7 +398,9 @@ class CustList extends React.Component {
                     header='Reassign Cleaner'
                     trigger={<button id='reassignCleaner' ref='reassignCleaner' aria-label="" style={getSearchButtonStyle()}> <span>Reassign Cleaner</span> </button>}
                 >
-                    <TextInput required="" aria-required="true" className="input-field col s10" label="10 digit Mobile number(without country code)" id="newStaffMobile" ref="newStaffMobile" type="text" onChange={this.handleInvoiceFieldChange}/>
+                    <select className='associate-filter' id="associate_change" ref="associate_change" value={this.state.associate_change} onChange={(e) => this.handleAssociateChange(e)}>
+                        {this.createOptions(this.associateTotalMap)}
+                    </select>
                     <Button className="col s2 #000000 black" onClick={this.handleAssignCleaner}>Reassign</Button>
                 </Modal>
             </span>
@@ -394,6 +415,12 @@ class CustList extends React.Component {
             cleanerMap.set('All', 'All')
             let customers;
             if (customer) {
+                if(this.props.getCleanersMap) {
+                    customer.filter(c =>
+                        this.associateTotalMap.set(c.staffMobile,
+                            this.props.getCleanersMap.get(c.staffMobile.substring(3)))
+                    )
+                }
                 if (this.state.searchCustomerName !== 'all#') {
                     this.filteredCustomers = customer.filter(c =>
                         (c.name && c.name.toLowerCase().includes(this.state.searchCustomerName)) ||

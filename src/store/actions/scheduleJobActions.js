@@ -101,7 +101,7 @@ export const reassignJobAction = (currentDate, associateFrom, associateTo) => {
 
 export const scheduleJobAction = (currentDate) => {
     
-    function getCarMap(customerId, associateId, serviceType, customerName) {
+    function getCarMap(customerId, associateId, serviceType, customerName, customerApartment) {
         return {
           associateFeedback: "",
           associateId: associateId,
@@ -112,7 +112,8 @@ export const scheduleJobAction = (currentDate) => {
           serviceType: serviceType,
           supervisorFeedback: "",
           supervisorId: "",
-          customerName: customerName
+          customerName: customerName,
+          customerApartment: customerApartment
         };
       }
 
@@ -124,7 +125,7 @@ export const scheduleJobAction = (currentDate) => {
             if(!interServiceDateDoc.exists) {
                 firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
                 .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
-                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, 'Exterior', customerName), {merge: false});
+                .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, 'Exterior', customerName, customerApartment), {merge: false});
                 return;
             }
             let interiorCarsList = interServiceDateDoc.data.Cars;
@@ -132,7 +133,7 @@ export const scheduleJobAction = (currentDate) => {
             let serviceType = interiorCarsList.includes(carModel) ? 'Interior' : 'Exterior';
             firestore.collection('job_allocation').doc('' + currentDate.getFullYear())
             .collection('' + (currentDate.getMonth() + 1)).doc('' + currentDate.getDate())
-            .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, serviceType, customerName), {merge: false});
+            .collection("cars").doc(carModel).set(getCarMap(customerId, associateId, serviceType, customerName, customerApartment), {merge: false});
         })
     }
 
